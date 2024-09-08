@@ -1,11 +1,14 @@
 var myGamePiece;
+var myBackground;
 var myObstacles = [];
 var myScore;
+var Bird_Animation = new Image();
 
 function startGame() {
-    myGamePiece = new gameObject(30, 30, "red", 10, 120);
-    character2 = new gameObject(20, 20, "yellow", 20, 150);
-    
+    myGamePiece = new gameObject(30, 30, "Bird.png", 10, 120,"image");
+    //character2 = new gameObject(20, 20, "yellow", 20, 150);
+    myBackground = new gameObject(480, 270, "Background.jpg", 0, 0, "background");
+
     myGamePiece.gravity = 0.05;
     myScore = new gameObject("30px", "Consolas", "black", 280, 40, "text");
 
@@ -22,6 +25,20 @@ var myGameArea = {
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
         this.interval = setInterval(updateGameArea, 20);
+        ///here is the function to control the character with out keyboard
+        window.addEventListener('keydown',function  (e){
+
+            myGameArea.keys = (myGameArea.keys || []);
+            myGameArea.keys[e.keyCode] = true;
+
+        })
+
+        window.addEventListener("keyup",function  (e){
+
+            myGameArea.keys[e.keyCode] = false;
+            
+        })
+
         },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -37,26 +54,46 @@ function gameObject(width, height, color, x, y, type) {
     this.speedY = 0;    
     this.x = x;
     this.y = y;
-    this.gravity = 0;
+    this.gravity = 0.05;
     this.gravitySpeed = 0;
+    ///here we set the character image
+
+   if (type == "image" || type == "background") {
+    this.image = new Image();
+    this.image.src = color;
+  }
+
     this.update = function() {
         ctx = myGameArea.context;
-        if (this.type == "text") {
-            ctx.font = this.width + " " + this.height;
-            ctx.fillStyle = color;
-            ctx.fillText(this.text, this.x, this.y);
+        if (type == "image" || type == "background") {
+            ctx.drawImage(this.image, 
+                this.x, 
+                this.y,
+                this.width, this.height);
+        if (type == "background") {
+            ctx.drawImage(this.image, 
+                this.x + this.width, 
+                this.y,
+                this.width, this.height);
+        }
         } else {
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
     }
+    
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
         this.x += this.speedX;
         this.y += this.speedY + this.gravitySpeed;
+        if (this.type == "background") {
+            if (this.x == -(this.width)) {
+              this.x = 0;
+            }
+        }
         this.hitBottom();
     }
-    this.hitBottom = function() {
+    this.hitBottom = function() {///This is what defines the floor for the character
         var rockbottom = myGameArea.canvas.height - this.height;
         if (this.y > rockbottom) {
             this.y = rockbottom;
@@ -88,6 +125,9 @@ function updateGameArea() {
         } 
     }
     myGameArea.clear();
+    myBackground.speedX = -1;
+    myBackground.newPos();
+    myBackground.update();
     myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(150)) {
         x = myGameArea.canvas.width;
@@ -106,10 +146,42 @@ function updateGameArea() {
     }
     myScore.text="SCORE: " + myGameArea.frameNo;
     myScore.update();
+
+    ///Here we add the movement to our character
+
+    myGamePiece.speedX = 0;
+    myGamePiece.speedY = 0;
+
+    if( myGamePiece.speedX == 0 ||  myGamePiece.speedY == 0){myGamePiece.image.src = "Bird.png";
+    };
+    
+
+    if(myGameArea.keys && myGameArea.keys[37]){myGamePiece.speedX = -1
+        myGamePiece.image.src = "Bird2.png";
+    } ///Movement to the left
+    if(myGameArea.keys && myGameArea.keys[39]){myGamePiece.speedX = 1
+        myGamePiece.image.src = "Bird2.png";
+
+    } ///Movement to the right
+    if(myGameArea.keys && myGameArea.keys[38]){myGamePiece.speedY = -5
+        myGamePiece.image.src = "Bird2.png";
+
+    } ///movement up
+    if(myGameArea.keys && myGameArea.keys[40]){myGamePiece.speedY = 1
+        myGamePiece.image.src = "Bird2.png";
+
+    } ///Movement down
+
     myGamePiece.newPos();
     myGamePiece.update();
     character2.update();
 }
+
+function clearmove() {
+    myGamePiece.image.src = "Bird2.png";
+    myGamePiece.speedX = 0;
+    myGamePiece.speedY = 0;
+  }
 
 function everyinterval(n) {
     if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
