@@ -3,11 +3,16 @@ var myBackground;
 var myObstacles = [];
 var myScore;
 var Bird_Animation = new Image();
+var mySound;
+var myMusic;
+
 
 function startGame() {
     myGamePiece = new gameObject(30, 30, "Bird.png", 10, 120,"image");
-    //character2 = new gameObject(20, 20, "yellow", 20, 150);
     myBackground = new gameObject(480, 270, "Background.jpg", 0, 0, "background");
+    mySound = new sound("Death_Sound.mp3");
+    myMusic = new sound("BG_Music.mp3");
+    myMusic.play();
 
     myGamePiece.gravity = 0.05;
     myScore = new gameObject("30px", "Consolas", "black", 280, 40, "text");
@@ -58,14 +63,14 @@ function gameObject(width, height, color, x, y, type) {
     this.gravitySpeed = 0;
     ///here we set the character image
 
-   if (type == "image" || type == "background") {
+   if (type == "image" || type == "background" || type == "obstacle") {
     this.image = new Image();
     this.image.src = color;
   }
 
     this.update = function() {
         ctx = myGameArea.context;
-        if (type == "image" || type == "background") {
+        if (type == "image" || type == "background" || this.type == "obstacle") {
             ctx.drawImage(this.image, 
                 this.x, 
                 this.y,
@@ -121,6 +126,9 @@ function updateGameArea() {
     var x, height, gap, minHeight, maxHeight, minGap, maxGap;
     for (i = 0; i < myObstacles.length; i += 1) {
         if (myGamePiece.crashWith(myObstacles[i])) {
+            mySound.play();
+            myMusic.stop();
+            myGameArea.stop();
             return;
         } 
     }
@@ -137,11 +145,15 @@ function updateGameArea() {
         minGap = 50;
         maxGap = 200;
         gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
-        myObstacles.push(new gameObject(10, height, "green", x, 0));
-        myObstacles.push(new gameObject(10, x - height - gap, "green", x, height + gap));
+
+        myObstacles.push(new gameObject(35, height, "green", x, 0)); // Width of obstacle changed to 15
+        myObstacles.push(new gameObject(35, x - height - gap, "green", x, height + gap));
+
+        myObstacles.push(new gameObject(35, height, "Bricks_Patter.jpg", x, 0, "obstacle"));
+        myObstacles.push(new gameObject(35, x - height - gap, "Bricks_Patter.jpg", x, height + gap, "obstacle"));
     }
     for (i = 0; i < myObstacles.length; i += 1) {
-        myObstacles[i].x += -1;
+        myObstacles[i].x -= 2; // Increase or decrease speed of obstacles
         myObstacles[i].update();
     }
     myScore.text="SCORE: " + myGameArea.frameNo;
@@ -190,4 +202,23 @@ function everyinterval(n) {
 
 function accelerate(n) {
     myGamePiece.gravity = n;
+}
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function() {
+        if (!this.hasPlayed) {
+            this.sound.play();
+            this.hasPlayed = true; // Set the flag to true after playing
+        }
+    }
+    this.stop = function() {
+        this.sound.pause();
+        this.sound.currentTime = 0; // Reset to the beginning
+    }
 }
