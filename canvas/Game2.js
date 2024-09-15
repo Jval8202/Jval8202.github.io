@@ -2,6 +2,7 @@ var myGamePiece;
 var myBackground;
 var myObstacles = [];
 var myScore;
+var Bird_Animation = new Image();
 var mySound;
 var myMusic;
 var gamePaused = false; // Variable to track if the game is paused
