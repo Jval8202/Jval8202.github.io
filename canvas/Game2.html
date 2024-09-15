@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 canvas {
-    border:2px solid #d3d3d3;
+    border:10px solid #d3d3d3;
     background-color: #00f1f1;
 }
 </style>
@@ -12,9 +12,9 @@ canvas {
 <body onload="startGame()">
     <p>Use your direction keys to stay in the air</p>
     <p>How long can you stay alive?</p>
-    <button onclick="startGame()">Start the Game</button>
-    <button onclick="pauseGame()" id="pauseButton">Pause</button>
+    <button onclick="startGame()">Restart</button>
+    <button id="pauseButton" onclick="togglePause()">Pause</button>
 
-    <script src="Game2.js"></script>
+    <script src="Game.js"></script>
 </body>
 </html>
