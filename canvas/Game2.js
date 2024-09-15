@@ -5,52 +5,88 @@ var myScore;
 var Bird_Animation = new Image();
 var mySound;
 var myMusic;
+var gamePaused = false; // Variable to track if the game is paused
 
 
 function startGame() {
-    myGamePiece = new gameObject(30, 30, "Bird.png", 10, 120,"image");
+
+    // Clear existing obstacles and game interval
+    myObstacles = []; // Reset obstacles array
+    if (myGameArea.interval) {
+        clearInterval(myGameArea.interval);
+    }
+
+    // Stop the music if it is playing
+    if (myMusic) {
+        myMusic.stop();
+    }
+
+    // Initialize new game objects
+    myGamePiece = new gameObject(30, 30, "Bird.png", 10, 120, "image");
     myBackground = new gameObject(480, 270, "Background.jpg", 0, 0, "background");
     mySound = new sound("Death_Sound.mp3");
     myMusic = new sound("BG_Music.mp3");
+
+    // Reset the frame count and play music
+    myGameArea.frameNo = 0;
     myMusic.play();
-
-    myGamePiece.gravity = 0.05;
-    myScore = new gameObject("30px", "Consolas", "black", 280, 40, "text");
-
     
+    // Set gravity and other properties
+    myGamePiece.gravity = 0.05;
+    myScore = new gameObject("30px", "Consolas", "White", 280, 40, "text");
+
+    // Start the game loop
     myGameArea.start();
 }
 
+function togglePause() {
+    var pauseButton = document.getElementById("pauseButton");
+
+    if (gamePaused) {
+        // Resume the game
+        myGameArea.interval = setInterval(updateGameArea, 20);
+        myMusic.play();
+        pauseButton.innerHTML = "Pause";  // Change button text to "Pause"
+        gamePaused = false;
+        
+    } else {
+        // Pause the game
+        clearInterval(myGameArea.interval);  // Stop the game loop
+        myMusic.stop();
+        pauseButton.innerHTML = "Resume";  // Change button text to "Resume"
+        gamePaused = true;
+    }
+}
+
 var myGameArea = {
-    canvas : document.createElement("canvas"),
-    start : function() {
+    canvas: document.createElement("canvas"),
+    start: function () {
         this.canvas.width = 480;
         this.canvas.height = 270;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 20);
-        ///here is the function to control the character with out keyboard
-        window.addEventListener('keydown',function  (e){
+        this.interval = setInterval(updateGameArea, 20); // Game loop starts here
 
+        window.addEventListener('keydown', function (e) {
             myGameArea.keys = (myGameArea.keys || []);
             myGameArea.keys[e.keyCode] = true;
+        });
 
-        })
-
-        window.addEventListener("keyup",function  (e){
-
+        window.addEventListener("keyup", function (e) {
             myGameArea.keys[e.keyCode] = false;
-            
-        })
-
-        },
-    clear : function() {
+        });
+    },
+    clear: function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop: function () {
+        clearInterval(this.interval); // Stops the game
     }
-}
+};
 
 function gameObject(width, height, color, x, y, type) {
+
     this.type = type;
     this.score = 0;
     this.width = width;
@@ -59,8 +95,10 @@ function gameObject(width, height, color, x, y, type) {
     this.speedY = 0;    
     this.x = x;
     this.y = y;
-    this.gravity = 0.05;
+    this.gravity =  0;
     this.gravitySpeed = 0;
+    this.angle = 0;
+
     ///here we set the character image
 
    if (type == "image" || type == "background" || type == "obstacle") {
@@ -68,24 +106,50 @@ function gameObject(width, height, color, x, y, type) {
     this.image.src = color;
   }
 
-    this.update = function() {
-        ctx = myGameArea.context;
-        if (type == "image" || type == "background" || this.type == "obstacle") {
-            ctx.drawImage(this.image, 
-                this.x, 
-                this.y,
-                this.width, this.height);
-        if (type == "background") {
+  this.update = function() {
+    ctx = myGameArea.context;
+
+    if (this.type == "text") {
+        ctx.font = this.width + " " + this.height;
+        ctx.fillStyle = color;
+        ctx.fillText(this.text, this.x, this.y);
+    }
+
+    if (this.type == "image" || this.type == "background" || this.type == "obstacle") {
+        ctx.save(); // Save the current drawing state
+
+        // Move the canvas origin to the object's center for rotation
+        ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+        
+        // Apply the rotation
+        ctx.rotate(this.angle);
+        
+        // Draw the image with the rotation applied
+        ctx.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
+
+        // Restore the canvas state to the original state
+        ctx.restore();
+
+        if (this.type == "background") {
             ctx.drawImage(this.image, 
                 this.x + this.width, 
                 this.y,
                 this.width, this.height);
         }
-        } else {
-            ctx.fillStyle = color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    } else {
+        // Apply transparency if it's a pink hitbox
+        if (color === "pink") {
+            ctx.globalAlpha = 0.05; // Set transparency to 100%
         }
+
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        // Reset transparency after drawing the hitbox
+        ctx.globalAlpha = 1.0;
     }
+}
     
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
@@ -125,6 +189,8 @@ function gameObject(width, height, color, x, y, type) {
 function updateGameArea() {
     var x, height, gap, minHeight, maxHeight, minGap, maxGap;
     for (i = 0; i < myObstacles.length; i += 1) {
+         // Ensure obstacle speed is consistent across games
+        
         if (myGamePiece.crashWith(myObstacles[i])) {
             mySound.play();
             myMusic.stop();
@@ -146,18 +212,22 @@ function updateGameArea() {
         maxGap = 200;
         gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
 
-        myObstacles.push(new gameObject(35, height, "green", x, 0)); // Width of obstacle changed to 15
-        myObstacles.push(new gameObject(35, x - height - gap, "green", x, height + gap));
+        // Create lower obstacle
+    myObstacles.push(new gameObject(40, height, "pink", x, 0)); // Width of obstacle changed to 15
+    myObstacles.push(new gameObject(40, x - height - gap, "pink", x, height + gap));
 
-        myObstacles.push(new gameObject(35, height, "Bricks_Patter.jpg", x, 0, "obstacle"));
-        myObstacles.push(new gameObject(35, x - height - gap, "Bricks_Patter.jpg", x, height + gap, "obstacle"));
+    // Create upper obstacle with rotation
+    var upperObstacle = new gameObject(40, height, "Pipe.png", x, 0, "obstacle");
+    upperObstacle.angle = Math.PI; // Rotate 180 degrees
+    myObstacles.push(upperObstacle);
+
+    var lowerObstacle = new gameObject(40, x - height - gap, "Pipe.png", x, height + gap, "obstacle");
+    myObstacles.push(lowerObstacle);
     }
     for (i = 0; i < myObstacles.length; i += 1) {
         myObstacles[i].x -= 2; // Increase or decrease speed of obstacles
         myObstacles[i].update();
     }
-    myScore.text="SCORE: " + myGameArea.frameNo;
-    myScore.update();
 
     ///Here we add the movement to our character
 
@@ -174,15 +244,18 @@ function updateGameArea() {
     if(myGameArea.keys && myGameArea.keys[39]){myGamePiece.speedX = 1
         myGamePiece.image.src = "Bird2.png";
 
+
     } ///Movement to the right
     if(myGameArea.keys && myGameArea.keys[38]){myGamePiece.speedY = -5
         myGamePiece.image.src = "Bird2.png";
-
     } ///movement up
+    
     if(myGameArea.keys && myGameArea.keys[40]){myGamePiece.speedY = 1
         myGamePiece.image.src = "Bird2.png";
 
     } ///Movement down
+    myScore.text="SCORE: " + myGameArea.frameNo;
+    myScore.update();
 
     myGamePiece.newPos();
     myGamePiece.update();
@@ -211,14 +284,20 @@ function sound(src) {
     this.sound.setAttribute("controls", "none");
     this.sound.style.display = "none";
     document.body.appendChild(this.sound);
+
+    // New flag to prevent overlapping sounds
+    this.hasPlayed = false;
+
     this.play = function() {
         if (!this.hasPlayed) {
             this.sound.play();
             this.hasPlayed = true; // Set the flag to true after playing
         }
     }
+    
     this.stop = function() {
         this.sound.pause();
         this.sound.currentTime = 0; // Reset to the beginning
+        this.hasPlayed = false; // Allow to play again next time
     }
 }
