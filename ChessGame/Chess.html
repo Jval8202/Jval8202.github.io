@@ -85,10 +85,11 @@
       const [pawnHasMoved, setPawnHasMoved] = React.useState(
         Array(8).fill(false).map(() => Array(8).fill(false))
      );
+     
       const [isWhiteTurn, setIsWhiteTurn] = React.useState(true); // White goes first
       const [isGameOver, setIsGameOver] = React.useState(false);
       const [winner, setWinner] = React.useState('');
-
+      
         function isClearPath(selectedRow, selectedCol, row, col, direction) {
 
         if (direction === 'horizontal') {
@@ -110,172 +111,179 @@
         }
        
         function handleClick(row, col) {
-    if (selectedSquare) {
-        const [selectedRow, selectedCol] = selectedSquare;
-        const piece = game[selectedRow][selectedCol];
+        if (isGameOver) return; // Prevent any actions if the game is over
+        if (selectedSquare) {
+          const [selectedRow, selectedCol] = selectedSquare;
+          const piece = game[selectedRow][selectedCol];
 
         // Prevent moving a piece to its own position
-        if (selectedRow === row && selectedCol === col) {
-            // Deselect the square if the same piece is clicked again
-            setSelectedSquare(null);
-            return;
-        }
+          if (selectedRow === row && selectedCol === col) {
+              // Deselect the square if the same piece is clicked again
+              setSelectedSquare(null);
+              return;
+          }
 
         // Check whose turn it is
-        const isWhitePiece = /[RNBQKP]/.test(piece);  // White pieces are uppercase
-        const isBlackPiece = /[rnbqkp]/.test(piece);  // Black pieces are lowercase
+          const isWhitePiece = /[RNBQKP]/.test(piece);  // White pieces are uppercase
+          const isBlackPiece = /[rnbqkp]/.test(piece);  // Black pieces are lowercase
 
-        // Ensure only the correct player can move
-        if ((isWhiteTurn && isBlackPiece) || (!isWhiteTurn && isWhitePiece)) {
-            return;  // Exit the function if it's not the player's turn
-        }
+          // Ensure only the correct player can move
+          if ((isWhiteTurn && isBlackPiece) || (!isWhiteTurn && isWhitePiece)) {
+              return;  // Exit the function if it's not the player's turn
+          }
         
 
-        const targetPiece = game[row][col];
-        const isOppositePiece = isWhitePiece ? /[rnbqkp]/.test(targetPiece) : /[RNBQKP]/.test(targetPiece);
+          const targetPiece = game[row][col];
+          const isOppositePiece = isWhitePiece ? /[rnbqkp]/.test(targetPiece) : /[RNBQKP]/.test(targetPiece);
 
-        const isTargetWhitePiece = /[RNBQKP]/.test(targetPiece);  // Destination piece is white
-        const isTargetBlackPiece = /[rnbqkp]/.test(targetPiece);  // Destination piece is black
+          const isTargetWhitePiece = /[RNBQKP]/.test(targetPiece);  // Destination piece is white
+          const isTargetBlackPiece = /[rnbqkp]/.test(targetPiece);  // Destination piece is black
 
-        // Prevent capturing a piece of the same color
-        if ((isWhitePiece && isTargetWhitePiece) || (isBlackPiece && isTargetBlackPiece)) {
-            return;  // Exit the function if the target square has a piece of the same color
-        }
+          // Prevent capturing a piece of the same color
+          if ((isWhitePiece && isTargetWhitePiece) || (isBlackPiece && isTargetBlackPiece)) {
+              return;  // Exit the function if the target square has a piece of the same color
+          }
 
-        // Capture logic: Add points for capturing the target piece
-        if (targetPiece) {
-                const isPawn = targetPiece === 'p' || targetPiece === 'P';
-                const points = isPawn ? 1 : 2; // 1 point for pawn, 2 points for other pieces
+          // Capture logic: Add points for capturing the target piece
+          if (targetPiece) {
+                  const isPawn = targetPiece === 'p' || targetPiece === 'P';
+                  const points = isPawn ? 1 : 2; // 1 point for pawn, 2 points for other pieces
 
-                if (isWhiteTurn) {
-                    setWhiteScore(whiteScore + points); // White player captures
-                } else {
-                    setBlackScore(blackScore + points); // Black player captures
+                  if (isWhiteTurn) {
+                      setWhiteScore(whiteScore + points); // White player captures
+                  } else {
+                      setBlackScore(blackScore + points); // Black player captures
+                  }
+                  
+                  if (targetPiece === 'K' || targetPiece === 'k') {
+                      setIsGameOver(true); // End the game
+                      setWinner(isWhiteTurn ? 'White' : 'Black'); // Declare the winner
+                  }
+
                 }
-                
-              }
 
-        // Pawn logic (as before)
-        const isPawn = piece === 'p' || piece === 'P';
-        const isWhitePawn = piece === 'P';
-        const direction = isWhitePawn ? -1 : 1; // White pawns move up (-1), Black move down (+1)
-        const startRow = isWhitePawn ? 6 : 1;
-        const canMoveTwo = selectedRow === startRow && !pawnHasMoved[selectedRow][selectedCol];
+          // Pawn logic (as before)
+          const isPawn = piece === 'p' || piece === 'P';
+          const isWhitePawn = piece === 'P';
+          const direction = isWhitePawn ? -1 : 1; // White pawns move up (-1), Black move down (+1)
+          const startRow = isWhitePawn ? 6 : 1;
+          const canMoveTwo = selectedRow === startRow && !pawnHasMoved[selectedRow][selectedCol];
 
-        // Valid pawn move
-        const validPawnMove =
-            isPawn &&
-            (row === selectedRow + direction || (canMoveTwo && row === selectedRow + 2 * direction)) &&
-            col === selectedCol &&
-            game[row][col] === '';  // Ensure the destination square is empty for forward moves
+          // Valid pawn move
+          const validPawnMove =
+              isPawn &&
+              (row === selectedRow + direction || (canMoveTwo && row === selectedRow + 2 * direction)) &&
+              col === selectedCol &&
+              game[row][col] === '';  // Ensure the destination square is empty for forward moves
 
-        // Valid pawn capture
-        const validPawnCapture =
+          // Valid pawn capture
+          const validPawnCapture =
             isPawn &&
             row === selectedRow + direction &&  // Move one row forward
             Math.abs(col - selectedCol) === 1 &&  // Move diagonally (left or right)
             isOppositePiece;  // Ensure the target square contains an opposing piece
 
-        // Rook logic
-        const isRook = piece === 'r' || piece === 'R';
-        const validRookMove = isRook && (
-            (selectedRow === row && isClearPath(selectedRow, selectedCol, row, col, 'horizontal')) ||
-            (selectedCol === col && isClearPath(selectedRow, selectedCol, row, col, 'vertical'))
-        );
+          // Rook logic
+          const isRook = piece === 'r' || piece === 'R';
+          const validRookMove = isRook && (
+              (selectedRow === row && isClearPath(selectedRow, selectedCol, row, col, 'horizontal')) ||
+              (selectedCol === col && isClearPath(selectedRow, selectedCol, row, col, 'vertical'))
+          );
 
-        const validRookCapture = isRook && (
-            (selectedRow === row && isClearPath(selectedRow, selectedCol, row, col, 'horizontal') && isOppositePiece) ||
-            (selectedCol === col && isClearPath(selectedRow, selectedCol, row, col, 'vertical') && isOppositePiece)
-        );
+          const validRookCapture = isRook && (
+              (selectedRow === row && isClearPath(selectedRow, selectedCol, row, col, 'horizontal') && isOppositePiece) ||
+              (selectedCol === col && isClearPath(selectedRow, selectedCol, row, col, 'vertical') && isOppositePiece)
+          );
 
-        // Knight logic
-        const isKnight = piece === 'n' || piece === 'N';
-        const validKnightMove = isKnight && (
-            (Math.abs(selectedRow - row) === 2 && Math.abs(selectedCol - col) === 1) ||
-            (Math.abs(selectedRow - row) === 1 && Math.abs(selectedCol - col) === 2)
-        );
+          // Knight logic
+          const isKnight = piece === 'n' || piece === 'N';
+          const validKnightMove = isKnight && (
+              (Math.abs(selectedRow - row) === 2 && Math.abs(selectedCol - col) === 1) ||
+              (Math.abs(selectedRow - row) === 1 && Math.abs(selectedCol - col) === 2)
+          );
 
-        const validKnightCapture = isKnight && validKnightMove && isOppositePiece;
+          const validKnightCapture = isKnight && validKnightMove && isOppositePiece;
 
-        // Bishop logic
-        const isBishop = piece === 'b' || piece === 'B';
-        const validBishopMove = isBishop && (
-            Math.abs(selectedRow - row) === Math.abs(selectedCol - col) && 
-            isClearPath(selectedRow, selectedCol, row, col, 'diagonal')
-        );
+          // Bishop logic
+          const isBishop = piece === 'b' || piece === 'B';
+          const validBishopMove = isBishop && (
+              Math.abs(selectedRow - row) === Math.abs(selectedCol - col) && 
+              isClearPath(selectedRow, selectedCol, row, col, 'diagonal')
+          );
 
-        const validBishopCapture = isBishop && validBishopMove && isOppositePiece;
+          const validBishopCapture = isBishop && validBishopMove && isOppositePiece;
 
-        // Queen logic
-        const isQueen = piece === 'q' || piece === 'Q';
-        const validQueenMove = isQueen && (
-            (selectedRow === row && isClearPath(selectedRow, selectedCol, row, col, 'horizontal')) ||
-            (selectedCol === col && isClearPath(selectedRow, selectedCol, row, col, 'vertical')) ||
-            (Math.abs(selectedRow - row) === Math.abs(selectedCol - col) && 
-            isClearPath(selectedRow, selectedCol, row, col, 'diagonal'))
-        );
+          // Queen logic
+          const isQueen = piece === 'q' || piece === 'Q';
+          const validQueenMove = isQueen && (
+              (selectedRow === row && isClearPath(selectedRow, selectedCol, row, col, 'horizontal')) ||
+              (selectedCol === col && isClearPath(selectedRow, selectedCol, row, col, 'vertical')) ||
+              (Math.abs(selectedRow - row) === Math.abs(selectedCol - col) && 
+              isClearPath(selectedRow, selectedCol, row, col, 'diagonal'))
+          );
 
-        const validQueenCapture = isQueen && validQueenMove && isOppositePiece;
+          const validQueenCapture = isQueen && validQueenMove && isOppositePiece;
 
-        // King logic
-        const isKing = piece === 'k' || piece === 'K';
-        const validKingMove = isKing && (
-            (Math.abs(selectedRow - row) <= 1 && Math.abs(selectedCol - col) <= 1)
-        );
+          // King logic
+          const isKing = piece === 'k' || piece === 'K';
+          const validKingMove = isKing && (
+              (Math.abs(selectedRow - row) <= 1 && Math.abs(selectedCol - col) <= 1)
+          );
 
-        const validKingCapture = isKing && validKingMove && isOppositePiece;
+          const validKingCapture = isKing && validKingMove && isOppositePiece;
 
-        // Check for valid moves
-        if (validPawnMove || validPawnCapture || validRookMove || validRookCapture ||
-            validKnightMove || validKnightCapture ||
-            validBishopMove || validBishopCapture ||
-            validQueenMove || validQueenCapture ||
-            validKingMove || validKingCapture) {
-            const newGame = game.map(row => row.slice());
+          // Check for valid moves
+          if (validPawnMove || validPawnCapture || validRookMove || validRookCapture ||
+              validKnightMove || validKnightCapture ||
+              validBishopMove || validBishopCapture ||
+              validQueenMove || validQueenCapture ||
+              validKingMove || validKingCapture) {
+              const newGame = game.map(row => row.slice());
 
-            // Move the piece
-            newGame[row][col] = piece;
-            newGame[selectedRow][selectedCol] = '';
+              // Move the piece
+              newGame[row][col] = piece;
+              newGame[selectedRow][selectedCol] = '';
 
-            // Check for king capture
-            const isKingCapture = (piece === 'K' && game[row][col] === 'k') || (piece === 'k' && game[row][col] === 'K');
-            if (isKingCapture) {
-                setIsGameOver(true);
-                setWinner(isWhiteTurn ? 'Black' : 'White');
-            }
+              // Check for king capture
+              const isKingCapture = (piece === 'K' && game[row][col] === 'k') || (piece === 'k' && game[row][col] === 'K');
+              if (isKingCapture) {
+                  setIsGameOver(true);
+                  setWinner(isWhiteTurn ? 'Black' : 'White');
+              }
 
-            // Mark the pawn as having moved if it moved two squares forward
-            if (canMoveTwo && row === selectedRow + 2 * direction) {
-                const updatedPawnHasMoved = [...pawnHasMoved];
-                updatedPawnHasMoved[selectedRow][selectedCol] = true;
-                setPawnHasMoved(updatedPawnHasMoved);
-            }
+              // Mark the pawn as having moved if it moved two squares forward
+              if (canMoveTwo && row === selectedRow + 2 * direction) {
+                  const updatedPawnHasMoved = [...pawnHasMoved];
+                  updatedPawnHasMoved[selectedRow][selectedCol] = true;
+                  setPawnHasMoved(updatedPawnHasMoved);
+              }
 
-            setGame(newGame);
+              setGame(newGame);
 
-            // Switch turns after a valid move
-            setIsWhiteTurn(!isWhiteTurn);
+              // Switch turns after a valid move
+              setIsWhiteTurn(!isWhiteTurn);
 
-            setSelectedSquare(null);
-        } else {
-            setSelectedSquare([row, col]);
-        }
-    } else {
-        if (game[row][col]) {
-            const piece = game[row][col];
-            const isWhitePiece = /[RNBQKP]/.test(piece);
-            const isBlackPiece = /[rnbqkp]/.test(piece);
+              setSelectedSquare(null);
+          } else {
+              setSelectedSquare([row, col]);
+          }
+      } else {
+          if (game[row][col]) {
+              const piece = game[row][col];
+              const isWhitePiece = /[RNBQKP]/.test(piece);
+              const isBlackPiece = /[rnbqkp]/.test(piece);
 
-            // Only allow selecting a piece if it's that player's turn
-            if ((isWhiteTurn && isWhitePiece) || (!isWhiteTurn && isBlackPiece)) {
-                setSelectedSquare([row, col]);
-            }
+              // Only allow selecting a piece if it's that player's turn
+              if ((isWhiteTurn && isWhitePiece) || (!isWhiteTurn && isBlackPiece)) {
+                  setSelectedSquare([row, col]);
+              }
         }
     }
 }  
 return (
         <div>
             <h2>{isWhiteTurn ? "White's turn" : "Black's turn"}</h2>
+            {isGameOver && <h2>Game Over! {winner} wins!</h2>}
             <div>
                 <h3>Scoreboard</h3>
                 <p>White: {whiteScore} points</p>
