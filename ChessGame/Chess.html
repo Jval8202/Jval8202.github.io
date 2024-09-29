@@ -75,8 +75,7 @@
     return true;  // Path is clear
 }
 
-
-    function Game() {
+function Game() {
       const [game, setGame] = React.useState(initialGameState);
       const [selectedSquare, setSelectedSquare] = React.useState(null);
       const [step, setStep] = React.useState(0);
@@ -89,6 +88,7 @@
       const [isWhiteTurn, setIsWhiteTurn] = React.useState(true); // White goes first
       const [isGameOver, setIsGameOver] = React.useState(false);
       const [winner, setWinner] = React.useState('');
+      const [hasStarted, setHasStarted] = React.useState(false); // New state to track game start
       
         function isClearPath(selectedRow, selectedCol, row, col, direction) {
 
@@ -109,7 +109,28 @@
         }
         return true;  // Path is clear
         }
-       
+
+        // Function to handle starting the game
+        function handleStartGame() {
+          setHasStarted(true);
+          setIsWhiteTurn(true);
+          setIsGameOver(false);
+          setWinner('');
+        }
+
+        // Function to handle restarting the game
+        function handleRestartGame() {
+          setGame(initialGameState);  // Reset board to initial state
+          setWhiteScore(0);           // Reset scores
+          setBlackScore(0);
+          setPawnHasMoved(Array(8).fill(false).map(() => Array(8).fill(false)));
+          setSelectedSquare(null);
+          setIsWhiteTurn(true);
+          setIsGameOver(false);
+          setWinner('');
+          setHasStarted(true);        // Ensure the game remains in the started state
+        }
+
         function handleClick(row, col) {
         if (isGameOver) return; // Prevent any actions if the game is over
         if (selectedSquare) {
@@ -281,17 +302,80 @@
     }
 }  
 return (
-        <div>
-            <h2>{isWhiteTurn ? "White's turn" : "Black's turn"}</h2>
-            {isGameOver && <h2>Game Over! {winner} wins!</h2>}
-            <div>
-                <h3>Scoreboard</h3>
-                <p>White: {whiteScore} points</p>
-                <p>Black: {blackScore} points</p>
-            </div>
-            <Board game={game} onSquareClick={handleClick} selectedSquare={selectedSquare} stepl={step} />
+  <div>
+    {!hasStarted ? (
+      <div>
+        <h2>Welcome to the Chess Game!</h2>
+        <button
+          onClick={handleStartGame}
+          style={{
+            backgroundColor: 'green',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: 'none',
+            fontSize: '16px',
+            cursor: 'pointer'
+          }}
+        >
+          Start Game
+        </button>
+      </div>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+        }}
+      >
+        <h2>{isWhiteTurn ? "White's turn" : "Black's turn"}</h2>
+        {isGameOver && <h2>Game Over! {winner} wins!</h2>}
+
+        {/* Flex container for Board and Scoreboard */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          
+          {/* Chessboard */}
+          <Board game={game} onSquareClick={handleClick} selectedSquare={selectedSquare} stepl={step} />
+          
+          {/* Scoreboard */}
+          <div style={{
+            backgroundColor: '#f0f0f0',
+            borderRadius: '10px',
+            padding: '15px',
+            border: '2px solid #333',
+            textAlign: 'center',
+            maxWidth: '200px',
+            marginLeft: '20px' // Add spacing between board and scoreboard
+          }}>
+            <h3 style={{ marginBottom: '10px' }}>Scoreboard</h3>
+            <p style={{ margin: '5px 0', fontSize: '18px', color: '#333' }}>White: {whiteScore} points</p>
+            <p style={{ margin: '5px 0', fontSize: '18px', color: '#333' }}>Black: {blackScore} points</p>
+          </div>
         </div>
-        );
+
+        {/* Restart Button */}
+        <button
+          onClick={handleRestartGame}
+          style={{
+            backgroundColor: 'Blue',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: 'none',
+            fontSize: '16px',
+            cursor: 'pointer',
+            marginTop: '10px'
+          }}
+        >
+          Restart Game
+        </button>
+      </div>
+    )}
+  </div>
+);
     }
     
 
@@ -300,7 +384,18 @@ return (
       return (
         <div>
           
-          <button> {stepl}  </button>
+         <button style={{
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          padding: '5px 10px',
+          borderRadius: '5px',
+          border: 'none',
+          fontSize: '16px',
+          cursor: 'pointer',
+          marginBottom: '10px'
+        }}> 
+          {stepl}
+        </button>
           
           {game.map((row, rowIndex) => (
             <div key={rowIndex} style={{ display: 'flex' }}>
@@ -327,7 +422,7 @@ return (
         justifyContent: 'center',
         alignItems: 'center',
         cursor: 'pointer',
-        backgroundColor: isSelected ? '#ffeb3b' : (isLight ? '#f0d9b5' : '#b58863'),
+        backgroundColor: isSelected ? 'red' : (isLight ? 'yellow' : 'purple'),
         border: '1px solid #999'
       };
 
