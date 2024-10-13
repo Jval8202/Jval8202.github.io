@@ -42,7 +42,7 @@
         let moveRight = false;
         const step = 5;
 
-        // Enemy list
+        // Arrays to store enemies and bullets
         let enemies = [];
         let bullets = [];
 
@@ -133,15 +133,28 @@
         // Spawn enemies at regular intervals
         setInterval(spawnEnemy, 1000); // Spawn every 1 second
 
+        // Function to check if two objects are colliding
+        function isColliding(bullet, enemy) {
+            return (
+                bullet.left < enemy.left + enemy.width &&
+                bullet.left + bullet.radius * 2 > enemy.left &&
+                bullet.top < enemy.top + enemy.height &&
+                bullet.top + bullet.radius * 2 > enemy.top
+            );
+        }
+
         // Check for collisions between bullets and enemies
         function checkCollisions() {
             bullets.forEach(bullet => {
                 enemies.forEach(enemy => {
-                    if (bullet.intersectsWithObject(enemy)) {
+                    if (isColliding(bullet, enemy)) {
+                        // Remove bullet and enemy on hit
                         canvas.remove(bullet);
                         canvas.remove(enemy);
-                        bullets = bullets.filter(b => b !== bullet); // Remove bullet
-                        enemies = enemies.filter(e => e !== enemy); // Remove enemy
+
+                        // Remove from arrays
+                        bullets = bullets.filter(b => b !== bullet);
+                        enemies = enemies.filter(e => e !== enemy);
                     }
                 });
             });
