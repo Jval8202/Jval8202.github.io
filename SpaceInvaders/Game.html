@@ -3,33 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Shooter Game with Enemies</title>
+    <title>Simple Shooter Game with Game Over Screen</title>
     <script src="https://cdn.jsdelivr.net/npm/fabric@5.0.0/dist/fabric.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
         }
         canvas {
             border: 1px solid #000;
+            display: block;
+        }
+        #pauseButton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #scoreboard {
+            position: absolute; /* Absolute positioning */
+            top: 10px; /* Distance from the top */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Offset for centering */
+            font-size: 20px;
+            color: black; /* Color of the text */
+        }
+        #gameOverScreen {
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+            color: white;
+            font-size: 30px;
+            text-align: center;
+            padding-top: 20%; /* Center vertically */
+        }
+        #restartButton {
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
+    <div id="scoreboard">Score: 0</div> <!-- Scoreboard -->
     <canvas id="canvas"></canvas>
+    <button id="pauseButton">Pause</button> <!-- Pause/Resume button -->
+    
+    <div id="gameOverScreen">Game Over!<br><button id="restartButton">Restart</button></div> <!-- Game Over screen -->
+    
     <script>
         // Initialize the Fabric.js canvas
         const canvas = new fabric.Canvas('canvas');
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        canvas.setWidth(width);
-        canvas.setHeight(height);
+        const canvasWidth = 400;  // Set a narrower canvas width
+        const canvasHeight = window.innerHeight * 0.9; // Make canvas height 90% of window height to leave room for button
+        canvas.setWidth(canvasWidth);
+        canvas.setHeight(canvasHeight);
 
         // Create player (blue rectangle)
         const player = new fabric.Rect({
-            left: width / 2 - 25,
-            top: height - 50,
+            left: canvasWidth / 2 - 25,
+            top: canvasHeight - 50,
             fill: 'blue',
             width: 50,
             height: 20,
@@ -37,24 +79,36 @@
         });
         canvas.add(player);
 
-        // Variables to control player movement
+        // Variables to control game state
         let moveLeft = false;
         let moveRight = false;
+        let paused = false; // Paused state
+        let gameOver = false; // Game over state
         const step = 5;
-
-        // Arrays to store enemies and bullets
         let enemies = [];
         let bullets = [];
+        let score = 0; // Initialize score
+
+        // Function to toggle pause state
+        function togglePause() {
+            paused = !paused; // Toggle paused state
+            document.getElementById('pauseButton').textContent = paused ? 'Resume' : 'Pause'; // Update button text
+        }
+
+        // Pause button event listener
+        document.getElementById('pauseButton').addEventListener('click', togglePause);
 
         // Update player position continuously while key is pressed
         function movePlayer() {
-            if (moveLeft) {
-                player.left = Math.max(0, player.left - step);
+            if (!paused && !gameOver) {
+                if (moveLeft) {
+                    player.left = Math.max(0, player.left - step);
+                }
+                if (moveRight) {
+                    player.left = Math.min(canvasWidth - player.width, player.left + step);
+                }
+                canvas.renderAll();
             }
-            if (moveRight) {
-                player.left = Math.min(width - player.width, player.left + step);
-            }
-            canvas.renderAll();
             requestAnimationFrame(movePlayer); // Continue to check for movement
         }
         movePlayer(); // Start the movement loop
@@ -79,7 +133,7 @@
 
         // Shoot bullets
         document.addEventListener('keydown', (event) => {
-            if (event.key === ' ') { // Space key to shoot
+            if (event.key === ' ' && !paused && !gameOver) { // Space key to shoot, but only when not paused
                 shootBullet();
             }
         });
@@ -96,79 +150,121 @@
             canvas.add(bullet);
 
             const interval = setInterval(() => {
-                bullet.top -= 5;
-                if (bullet.top < 0) {
-                    clearInterval(interval);
-                    canvas.remove(bullet);
-                    bullets = bullets.filter(b => b !== bullet); // Remove from array
+                if (!paused && !gameOver) { // Only move bullet if game is not paused
+                    bullet.top -= 5;
+                    if (bullet.top < 0) {
+                        clearInterval(interval);
+                        canvas.remove(bullet);
+                        bullets = bullets.filter(b => b !== bullet); // Remove from array
+                    }
+                    canvas.renderAll();
                 }
-                canvas.renderAll();
             }, 20);
         }
 
-        // Spawn enemies at random positions above the player
+        // Spawn enemies at random positions within the canvasWidth
         function spawnEnemy() {
-            const enemy = new fabric.Rect({
-                left: Math.random() * (width - 50), // Random horizontal position
-                top: -50, // Start above the screen
-                fill: 'red',
-                width: 50,
-                height: 50,
-                selectable: false
-            });
-            enemies.push(enemy);
-            canvas.add(enemy);
+            if (!paused && !gameOver) { // Only spawn enemies if game is not paused
+                const enemy = new fabric.Rect({
+                    left: Math.random() * (canvasWidth - 50), // Random horizontal position within the limited canvas width
+                    top: -50, // Start above the screen
+                    fill: 'red',
+                    width: 50,
+                    height: 50,
+                    selectable: false
+                });
+                enemies.push(enemy);
+                canvas.add(enemy);
 
-            const interval = setInterval(() => {
-                enemy.top += 2; // Enemy moves downwards
-                if (enemy.top > height) {
-                    clearInterval(interval);
-                    canvas.remove(enemy);
-                    enemies = enemies.filter(e => e !== enemy); // Remove out-of-bound enemy
-                }
-                canvas.renderAll();
-            }, 20);
+                const interval = setInterval(() => {
+                    if (!paused && !gameOver) { // Only move enemy if game is not paused
+                        enemy.top += 2; // Enemy moves downwards
+                        if (enemy.top > canvasHeight) {
+                            clearInterval(interval);
+                            canvas.remove(enemy);
+                            enemies = enemies.filter(e => e !== enemy); // Remove out-of-bound enemy
+                        }
+                        canvas.renderAll();
+                    }
+                }, 20);
+            }
         }
 
         // Spawn enemies at regular intervals
         setInterval(spawnEnemy, 1000); // Spawn every 1 second
 
         // Function to check if two objects are colliding
-        function isColliding(bullet, enemy) {
+        function isColliding(rect1, rect2) {
             return (
-                bullet.left < enemy.left + enemy.width &&
-                bullet.left + bullet.radius * 2 > enemy.left &&
-                bullet.top < enemy.top + enemy.height &&
-                bullet.top + bullet.radius * 2 > enemy.top
+                rect1.left < rect2.left + rect2.width &&
+                rect1.left + rect1.width > rect2.left &&
+                rect1.top < rect2.top + rect2.height &&
+                rect1.top + rect1.height > rect2.top
             );
         }
 
         // Check for collisions between bullets and enemies
         function checkCollisions() {
-            bullets.forEach(bullet => {
-                enemies.forEach(enemy => {
-                    if (isColliding(bullet, enemy)) {
-                        // Remove bullet and enemy on hit
-                        canvas.remove(bullet);
-                        canvas.remove(enemy);
+            if (!paused && !gameOver) { // Only check for collisions if game is not paused
+                bullets.forEach(bullet => {
+                    enemies.forEach(enemy => {
+                        if (isColliding(bullet, enemy)) {
+                            // Remove bullet and enemy on hit
+                            canvas.remove(bullet);
+                            canvas.remove(enemy);
 
-                        // Remove from arrays
-                        bullets = bullets.filter(b => b !== bullet);
-                        enemies = enemies.filter(e => e !== enemy);
-                    }
+                            // Update score
+                            score += 50;
+                            document.getElementById('scoreboard').textContent = `Score: ${score}`; // Update scoreboard
+
+                            // Remove from arrays
+                            bullets = bullets.filter(b => b !== bullet);
+                            enemies = enemies.filter(e => e !== enemy);
+                        }
+                    });
                 });
-            });
+            }
             requestAnimationFrame(checkCollisions); // Keep checking for collisions
         }
         checkCollisions(); // Start the collision detection loop
 
+        // Check for collision between player and enemies
+        function checkPlayerCollisions() {
+            if (!paused && !gameOver) {
+                enemies.forEach(enemy => {
+                    if (isColliding(player, enemy)) {
+                        gameOver = true; // Set game over state
+                        document.getElementById('gameOverScreen').style.display = 'block'; // Show game over screen
+                        document.getElementById('pauseButton').style.display = 'none'; // Hide pause button
+                    }
+                });
+            }
+            requestAnimationFrame(checkPlayerCollisions); // Keep checking for player collisions
+        }
+        checkPlayerCollisions(); // Start checking player collisions
+
+        // Restart the game
+        document.getElementById('restartButton').addEventListener('click', () => {
+            // Reset game state
+            gameOver = false;
+            score = 0;
+            bullets = [];
+            enemies = [];
+            document.getElementById('scoreboard').textContent = `Score: ${score}`; // Reset scoreboard
+            document.getElementById('gameOverScreen').style.display = 'none'; // Hide game over screen
+            document.getElementById('pauseButton').style.display = 'block'; // Show pause button again
+            player.set({ left: canvasWidth / 2 - 25, top: canvasHeight - 50 }); // Reset player position
+            canvas.clear(); // Clear canvas
+            canvas.add(player); // Add player back to canvas
+            canvas.renderAll(); // Render canvas
+        });
+
         // Adjust canvas size on window resize
         window.addEventListener('resize', () => {
-            const newWidth = window.innerWidth;
-            const newHeight = window.innerHeight;
-            canvas.setWidth(newWidth);
+            const newHeight = window.innerHeight * 0.9; // Adjust for 90% of window height
             canvas.setHeight(newHeight);
-            player.set({ left: newWidth / 2 - player.width / 2, top: newHeight - 50 });
+            player.set({ top: newHeight - 50 });
+            document.getElementById('scoreboard').style.top = '10px'; // Ensure scoreboard is positioned correctly
             canvas.renderAll();
         });
     </script>
