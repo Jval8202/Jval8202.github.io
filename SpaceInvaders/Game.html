@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Shooter Game with Enemies</title>
+    <script src="https://cdn.jsdelivr.net/npm/fabric@5.0.0/dist/fabric.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        // Initialize the Fabric.js canvas
+        const canvas = new fabric.Canvas('canvas');
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        canvas.setWidth(width);
+        canvas.setHeight(height);
+
+        // Create player (blue rectangle)
+        const player = new fabric.Rect({
+            left: width / 2 - 25,
+            top: height - 50,
+            fill: 'blue',
+            width: 50,
+            height: 20,
+            selectable: false
+        });
+        canvas.add(player);
+
+        // Variables to control player movement
+        let moveLeft = false;
+        let moveRight = false;
+        const step = 5;
+
+        // Enemy list
+        let enemies = [];
+        let bullets = [];
+
+        // Update player position continuously while key is pressed
+        function movePlayer() {
+            if (moveLeft) {
+                player.left = Math.max(0, player.left - step);
+            }
+            if (moveRight) {
+                player.left = Math.min(width - player.width, player.left + step);
+            }
+            canvas.renderAll();
+            requestAnimationFrame(movePlayer); // Continue to check for movement
+        }
+        movePlayer(); // Start the movement loop
+
+        // Player movement on keydown
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                moveLeft = true;
+            } else if (event.key === 'ArrowRight') {
+                moveRight = true;
+            }
+        });
+
+        // Stop player movement on keyup
+        document.addEventListener('keyup', (event) => {
+            if (event.key === 'ArrowLeft') {
+                moveLeft = false;
+            } else if (event.key === 'ArrowRight') {
+                moveRight = false;
+            }
+        });
+
+        // Shoot bullets
+        document.addEventListener('keydown', (event) => {
+            if (event.key === ' ') { // Space key to shoot
+                shootBullet();
+            }
+        });
+
+        function shootBullet() {
+            const bullet = new fabric.Circle({
+                left: player.left + player.width / 2 - 5,
+                top: player.top - 10,
+                fill: 'red',
+                radius: 5,
+                selectable: false
+            });
+            bullets.push(bullet);
+            canvas.add(bullet);
+
+            const interval = setInterval(() => {
+                bullet.top -= 5;
+                if (bullet.top < 0) {
+                    clearInterval(interval);
+                    canvas.remove(bullet);
+                    bullets = bullets.filter(b => b !== bullet); // Remove from array
+                }
+                canvas.renderAll();
+            }, 20);
+        }
+
+        // Spawn enemies at random positions above the player
+        function spawnEnemy() {
+            const enemy = new fabric.Rect({
+                left: Math.random() * (width - 50), // Random horizontal position
+                top: -50, // Start above the screen
+                fill: 'red',
+                width: 50,
+                height: 50,
+                selectable: false
+            });
+            enemies.push(enemy);
+            canvas.add(enemy);
+
+            const interval = setInterval(() => {
+                enemy.top += 2; // Enemy moves downwards
+                if (enemy.top > height) {
+                    clearInterval(interval);
+                    canvas.remove(enemy);
+                    enemies = enemies.filter(e => e !== enemy); // Remove out-of-bound enemy
+                }
+                canvas.renderAll();
+            }, 20);
+        }
+
+        // Spawn enemies at regular intervals
+        setInterval(spawnEnemy, 1000); // Spawn every 1 second
+
+        // Check for collisions between bullets and enemies
+        function checkCollisions() {
+            bullets.forEach(bullet => {
+                enemies.forEach(enemy => {
+                    if (bullet.intersectsWithObject(enemy)) {
+                        canvas.remove(bullet);
+                        canvas.remove(enemy);
+                        bullets = bullets.filter(b => b !== bullet); // Remove bullet
+                        enemies = enemies.filter(e => e !== enemy); // Remove enemy
+                    }
+                });
+            });
+            requestAnimationFrame(checkCollisions); // Keep checking for collisions
+        }
+        checkCollisions(); // Start the collision detection loop
+
+        // Adjust canvas size on window resize
+        window.addEventListener('resize', () => {
+            const newWidth = window.innerWidth;
+            const newHeight = window.innerHeight;
+            canvas.setWidth(newWidth);
+            canvas.setHeight(newHeight);
+            player.set({ left: newWidth / 2 - player.width / 2, top: newHeight - 50 });
+            canvas.renderAll();
+        });
+    </script>
+</body>
+</html>
