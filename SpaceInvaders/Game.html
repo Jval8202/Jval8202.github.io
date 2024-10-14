@@ -74,7 +74,7 @@
 
         // Load background image
         function loadBackgroundImage() {
-            fabric.Image.fromURL('background.jpg', function(img) { // Replace 'background.png' with your actual image path
+            fabric.Image.fromURL('Background.jpg', function(img) { // Replace 'background.png' with your actual image path
                 img.set({
                     left: 0,
                     top: 0,
@@ -185,7 +185,7 @@
 
         function spawnEnemy() {
     if (!paused && !gameOver) {
-        fabric.Image.fromURL('alien.png', function(img) { // Replace 'alien.png' with the actual path to your image
+        fabric.Image.fromURL('Alien.png', function(img) { // Replace 'alien.png' with the actual path to your image
             img.set({
                 left: Math.random() * (canvasWidth - img.width),
                 top: -img.height, // Start above the screen
