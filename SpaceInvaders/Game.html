@@ -13,6 +13,7 @@
             display: flex;
             flex-direction: column;
             align-items: center; /* Center content horizontally */
+            background-color: #000;
         }
         canvas {
             border: 1px solid #000;
@@ -70,8 +71,21 @@
         canvas.setWidth(canvasWidth);
         canvas.setHeight(canvasHeight);
 
-        // Set the background color to black
-        canvas.setBackgroundColor('black', canvas.renderAll.bind(canvas));
+        // Load background image
+        function loadBackgroundImage() {
+            fabric.Image.fromURL('background.jpg', function(img) { // Replace 'background.png' with your actual image path
+                img.set({
+                    left: 0,
+                    top: 0,
+                    selectable: false, // Make it non-selectable
+                    evented: false // Prevent it from capturing events
+                });
+                img.scaleToWidth(canvasWidth); // Scale to canvas width
+                img.scaleToHeight(canvasHeight); // Scale to canvas height
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas)); // Set as background image
+            });
+        }
+        loadBackgroundImage();
 
         // Load player image
         fabric.Image.fromURL('Starship.png', function(img) { // Replace 'player.png' with your actual image path
@@ -89,7 +103,7 @@
         let moveRight = false;
         let paused = false; // Paused state
         let gameOver = false; // Game over state
-        const step = 5;
+        const step = 2;
         let enemies = [];
         let bullets = [];
         let score = 0; // Initialize score
@@ -144,28 +158,29 @@
         });
 
         function shootBullet() {
-            const bullet = new fabric.Circle({
-                left: player.left + player.width / 2 - 5,
-                top: player.top - 10,
-                fill: 'red',
-                radius: 5,
-                selectable: false
-            });
-            bullets.push(bullet);
-            canvas.add(bullet);
+    const bullet = new fabric.Rect({
+        left: player.left + player.width / 2 - 2.5, // Center horizontally
+        top: player.top - 10, // Position above the player
+        fill: 'Yellow', // Color of the rectangle
+        width: 5, // Width of the rectangle
+        height: 15, // Height of the rectangle
+        selectable: false // Make it non-selectable
+    });
+    bullets.push(bullet);
+    canvas.add(bullet);
 
-            const interval = setInterval(() => {
-                if (!paused && !gameOver) { // Only move bullet if game is not paused
-                    bullet.top -= 5;
-                    if (bullet.top < 0) {
-                        clearInterval(interval);
-                        canvas.remove(bullet);
-                        bullets = bullets.filter(b => b !== bullet); // Remove from array
-                    }
-                    canvas.renderAll();
-                }
-            }, 20);
+    const interval = setInterval(() => {
+        if (!paused && !gameOver) { // Only move bullet if game is not paused
+            bullet.top -= 5; // Move the bullet upwards
+            if (bullet.top < 0) {
+                clearInterval(interval);
+                canvas.remove(bullet);
+                bullets = bullets.filter(b => b !== bullet); // Remove from array
+            }
+            canvas.renderAll();
         }
+    }, 20);
+}
 
         function spawnEnemy() {
     if (!paused && !gameOver) {
@@ -258,6 +273,7 @@
 
             player.set({ left: canvasWidth / 2 - 25, top: canvasHeight - 50 }); // Reset player position
             canvas.clear(); // Clear canvas
+            loadBackgroundImage(); // Reload the background image
             canvas.setBackgroundColor('black', canvas.renderAll.bind(canvas)); // Set background color to black 
             canvas.add(player); // Add player back to canvas
             canvas.renderAll(); // Render canvas
