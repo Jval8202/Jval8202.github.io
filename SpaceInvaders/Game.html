@@ -30,9 +30,9 @@
             left: 50%; /* Center horizontally */
             transform: translateX(-50%); /* Offset for centering */
             font-size: 20px;
-            color: black; /* Color of the text */
-        }
-        #gameOverScreen {
+            color: white; /* Change color to white for visibility on black background */
+            z-index: 10; /* Ensure it's on top of other elements */
+}        #gameOverScreen {
             display: none; /* Hidden by default */
             position: absolute;
             top: 0;
@@ -51,6 +51,8 @@
             cursor: pointer;
             margin-top: 20px;
         }
+
+        
     </style>
 </head>
 <body>
@@ -68,16 +70,19 @@
         canvas.setWidth(canvasWidth);
         canvas.setHeight(canvasHeight);
 
-        // Create player (blue rectangle)
-        const player = new fabric.Rect({
-            left: canvasWidth / 2 - 25,
-            top: canvasHeight - 50,
-            fill: 'blue',
-            width: 50,
-            height: 20,
-            selectable: false
+        // Set the background color to black
+        canvas.setBackgroundColor('black', canvas.renderAll.bind(canvas));
+
+        // Load player image
+        fabric.Image.fromURL('Starship.png', function(img) { // Replace 'player.png' with your actual image path
+            img.set({
+                left: canvasWidth / 2 - 25, // Center horizontally
+                top: canvasHeight - 50,      // Position near the bottom of the canvas
+                selectable: false             // Make it non-selectable
+            });
+            player = img; // Assign to player variable
+            canvas.add(player); // Add the player image to the canvas
         });
-        canvas.add(player);
 
         // Variables to control game state
         let moveLeft = false;
@@ -162,35 +167,32 @@
             }, 20);
         }
 
-        // Spawn enemies at random positions within the canvasWidth
         function spawnEnemy() {
-            if (!paused && !gameOver) { // Only spawn enemies if game is not paused
-                const enemy = new fabric.Rect({
-                    left: Math.random() * (canvasWidth - 50), // Random horizontal position within the limited canvas width
-                    top: -50, // Start above the screen
-                    fill: 'red',
-                    width: 50,
-                    height: 50,
-                    selectable: false
-                });
-                enemies.push(enemy);
-                canvas.add(enemy);
+    if (!paused && !gameOver) {
+        fabric.Image.fromURL('alien.png', function(img) { // Replace 'alien.png' with the actual path to your image
+            img.set({
+                left: Math.random() * (canvasWidth - img.width),
+                top: -img.height, // Start above the screen
+                selectable: false
+            });
+            enemies.push(img);
+            canvas.add(img);
 
-                const interval = setInterval(() => {
-                    if (!paused && !gameOver) { // Only move enemy if game is not paused
-                        enemy.top += 2; // Enemy moves downwards
-                        if (enemy.top > canvasHeight) {
-                            clearInterval(interval);
-                            canvas.remove(enemy);
-                            enemies = enemies.filter(e => e !== enemy); // Remove out-of-bound enemy
-                        }
-                        canvas.renderAll();
+            const interval = setInterval(() => {
+                if (!paused && !gameOver) {
+                    img.top += 2; // Enemy moves downwards
+                    if (img.top > canvasHeight) {
+                        clearInterval(interval);
+                        canvas.remove(img);
+                        enemies = enemies.filter(e => e !== img); // Remove out-of-bound enemy
                     }
-                }, 20);
-            }
-        }
-
-        // Spawn enemies at regular intervals
+                    canvas.renderAll();
+                }
+            }, 20);
+        });
+    }
+}
+                // Spawn enemies at regular intervals
         setInterval(spawnEnemy, 1000); // Spawn every 1 second
 
         // Function to check if two objects are colliding
@@ -247,14 +249,16 @@
         document.getElementById('restartButton').addEventListener('click', () => {
             // Reset game state
             gameOver = false;
-            score = 0;
+            score = 0; // Reset score
             bullets = [];
             enemies = [];
             document.getElementById('scoreboard').textContent = `Score: ${score}`; // Reset scoreboard
             document.getElementById('gameOverScreen').style.display = 'none'; // Hide game over screen
             document.getElementById('pauseButton').style.display = 'block'; // Show pause button again
+
             player.set({ left: canvasWidth / 2 - 25, top: canvasHeight - 50 }); // Reset player position
             canvas.clear(); // Clear canvas
+            canvas.setBackgroundColor('black', canvas.renderAll.bind(canvas)); // Set background color to black 
             canvas.add(player); // Add player back to canvas
             canvas.renderAll(); // Render canvas
         });
