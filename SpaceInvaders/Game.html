@@ -54,14 +54,46 @@
             margin-top: 20px;
         }
 
-        
+        #startScreen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 1); /* Semi-transparent black background */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: rgb(0, 255, 13);
+        font-size: 30px;
+        z-index: 20; /* Make sure it's on top of other elements */
+        }
+
+        #startButton {
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            background-color: rgb(20, 255, 20);
+        }
+
     </style>
 </head>
 <body>
+
+    <div id="startScreen"> <!-- Start Screen  -->
+        <h1>Welcome to space invaders</h1>
+        <button id="startButton">Start Game</button>
+    </div>
+
     <div id="scoreboard">Score: 0</div> <!-- Scoreboard -->
     <canvas id="canvas"></canvas>
-    <button id="pauseButton">Pause</button> <!-- Pause/Resume button -->
-    
+    <button id="pauseButton">Pause</button> <!-- Pause/Resume button -->\
+
+    <audio id="backgroundMusic" src="Background_Music.mp3" loop></audio> <!--Background track-->\
+    <audio id="DeathSound" src="Death_Sound.mp3" loop></audio> <!--death sound track-->\
+
     <div id="gameOverScreen">Game Over!<br><button id="restartButton">Restart</button></div> <!-- Game Over screen -->
     
     <script>
@@ -69,6 +101,10 @@
         const canvas = new fabric.Canvas('canvas');
         const canvasWidth = 400;  // Set a narrower canvas width
         const canvasHeight = window.innerHeight * 0.9; // Make canvas height 90% of window height to leave room for button
+
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const Death_Sound = document.getElementById('DeathSound');
+
         canvas.setWidth(canvasWidth);
         canvas.setHeight(canvasHeight);
 
@@ -89,7 +125,7 @@
         loadBackgroundImage();
 
         // Load player image
-        fabric.Image.fromURL('Starship.png', function(img) { // Replace 'player.png' with your actual image path
+        fabric.Image.fromURL('Starship.png', function(img) {
             img.set({
                 left: canvasWidth / 2 - 25, // Center horizontally
                 top: canvasHeight - 50,      // Position near the bottom of the canvas
@@ -102,22 +138,55 @@
         // Variables to control game state
         let moveLeft = false;
         let moveRight = false;
-        let paused = false; // Paused state
+        let paused = true; // Paused state
         let gameOver = false; // Game over state
         const step = 2;
         let enemies = [];
         let bullets = [];
         let score = 0; // Initialize score
 
+        // Hide start screen and begin the game
+        document.getElementById('startButton').addEventListener('click', () => {
+            document.getElementById('startScreen').style.display = 'none'; // Hide the start screen
+            paused = false; // Unpause the game
+            gameStarted = true; // Game is now started
+            document.getElementById('pauseButton').textContent = 'Pause'; // Set pause button text
+            backgroundMusic.play(); // Start playing the music on loop
+            startGame(); // Start game logic
+        });
+
         // Function to toggle pause state
         function togglePause() {
-            paused = !paused; // Toggle paused state
-            document.getElementById('pauseButton').textContent = paused ? 'Resume' : 'Pause'; // Update button text
+            if (gameStarted && !gameOver) { // Only allow pause if the game has started and is not over
+
+                paused = !paused; // Toggle paused state
+
+                document.getElementById('pauseButton').textContent = paused ? 'Resume' : 'Pause'; // Update button texth
+
+                if (paused) {
+                    backgroundMusic.pause(); // Pause the music when the game is paused
+                } else {
+                    backgroundMusic.play(); // Resume the music when the game is resumed
+                }
+            }
         }
 
         // Pause button event listener
         document.getElementById('pauseButton').addEventListener('click', togglePause);
 
+        // Start game logic
+        function startGame() {
+            gameStarted = true; // Mark game as started
+            movePlayer(); // Start the player movement loop
+            checkCollisions(); // Start checking for bullet-enemy collisions
+            checkPlayerCollisions(); // Start checking for player-enemy collisions
+            setInterval(spawnEnemy, 1000); // Start spawning enemies every 1 second
+        }
+
+
+
+        // Pause button event listener
+        document.getElementById('pauseButton').addEventListener('click', togglePause);
         // Update player position continuously while key is pressed
         function movePlayer() {
             if (!paused && !gameOver) {
@@ -159,14 +228,14 @@
         });
 
         function shootBullet() {
-    const bullet = new fabric.Rect({
-        left: player.left + player.width / 2 - 2.5, // Center horizontally
-        top: player.top - 10, // Position above the player
-        fill: 'Yellow', // Color of the rectangle
-        width: 5, // Width of the rectangle
-        height: 15, // Height of the rectangle
-        selectable: false // Make it non-selectable
-    });
+            const bullet = new fabric.Rect({
+            left: player.left + player.width / 2 - 2.5, // Center horizontally
+            top: player.top - 10, // Position above the player
+            fill: 'Yellow', // Color of the rectangle
+            width: 5, // Width of the rectangle
+            height: 15, // Height of the rectangle
+            selectable: false // Make it non-selectable
+        });
     bullets.push(bullet);
     canvas.add(bullet);
 
@@ -185,7 +254,7 @@
 
         function spawnEnemy() {
     if (!paused && !gameOver) {
-        fabric.Image.fromURL('Alien.png', function(img) { // Replace 'alien.png' with the actual path to your image
+        fabric.Image.fromURL('Alien.png', function(img) {
             img.set({
                 left: Math.random() * (canvasWidth - img.width),
                 top: -img.height, // Start above the screen
@@ -208,8 +277,8 @@
         });
     }
 }
-                // Spawn enemies at regular intervals
-        setInterval(spawnEnemy, 1000); // Spawn every 1 second
+        // Spawn enemies at regular intervals
+        setInterval(spawnEnemy, 1500); // Spawn every 1.5 second
 
         // Function to check if two objects are colliding
         function isColliding(rect1, rect2) {
@@ -246,6 +315,20 @@
         }
         checkCollisions(); // Start the collision detection loop
 
+        // Hide start screen and begin the game
+            document.getElementById('startButton').addEventListener('click', () => {
+                document.getElementById('startScreen').style.display = 'none'; // Hide the start screen
+                startGame(); // Call a function to start the game
+            });
+
+            function startGame() {
+                // Start the game logic here
+                movePlayer(); // Start the player movement loop
+                checkCollisions(); // Start checking for bullet-enemy collisions
+                checkPlayerCollisions(); // Start checking for player-enemy collisions
+                setInterval(spawnEnemy, 1000); // Start spawning enemies every 1 second
+            }
+
         // Check for collision between player and enemies
         function checkPlayerCollisions() {
             if (!paused && !gameOver) {
@@ -254,7 +337,14 @@
                         gameOver = true; // Set game over state
                         document.getElementById('gameOverScreen').style.display = 'block'; // Show game over screen
                         document.getElementById('pauseButton').style.display = 'none'; // Hide pause button
+                        backgroundMusic.pause(); // Stop background music
+                        if (Death_Sound.currentTime === 0 || Death_Sound.paused) {
+                            Death_Sound.play(); // Resume the music when the game is resumed
+
+                        }
                     }
+                   
+
                 });
             }
             requestAnimationFrame(checkPlayerCollisions); // Keep checking for player collisions
@@ -278,6 +368,12 @@
             canvas.setBackgroundColor('black', canvas.renderAll.bind(canvas)); // Set background color to black 
             canvas.add(player); // Add player back to canvas
             canvas.renderAll(); // Render canvas
+
+             // Restart music when the game restarts
+            backgroundMusic.currentTime = 0; // Reset the music track
+            backgroundMusic.play(); // Play music again
+            Death_Sound.pause(); ///stop the death sound
+
         });
 
         // Adjust canvas size on window resize
@@ -285,7 +381,7 @@
             const newHeight = window.innerHeight * 0.9; // Adjust for 90% of window height
             canvas.setHeight(newHeight);
             player.set({ top: newHeight - 50 });
-            document.getElementById('scoreboard').style.top = '10px'; // Ensure scoreboard is positioned correctly
+            document.getElementById('scoreboard').style.top = '10px'; // Ensuring our scoreboard is positioned correctly
             canvas.renderAll();
         });
     </script>
