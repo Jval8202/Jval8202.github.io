@@ -252,33 +252,55 @@
     }, 20);
 }
 
-        function spawnEnemy() {
-    if (!paused && !gameOver) {
+function spawnEnemy() {
+    if (!paused && !gameOver && enemies.length < 5) {  // Limit to 5 enemies
         fabric.Image.fromURL('Alien.png', function(img) {
-            img.set({
-                left: Math.random() * (canvasWidth - img.width),
-                top: -img.height, // Start above the screen
-                selectable: false
-            });
-            enemies.push(img);
-            canvas.add(img);
+            let positionValid = false;
 
-            const interval = setInterval(() => {
-                if (!paused && !gameOver) {
-                    img.top += 2; // Enemy moves downwards
-                    if (img.top > canvasHeight) {
-                        clearInterval(interval);
-                        canvas.remove(img);
-                        enemies = enemies.filter(e => e !== img); // Remove out-of-bound enemy
-                    }
-                    canvas.renderAll();
+            // Loop until a valid, non-overlapping position is found
+            while (!positionValid) {
+                const randomLeft = Math.random() * (canvasWidth - img.width);
+                const randomTop = -img.height; // Start above the screen
+                
+                // Check for overlap with existing enemies
+                positionValid = enemies.every(enemy => {
+                    return !(
+                        randomLeft < enemy.left + enemy.width &&
+                        randomLeft + img.width > enemy.left &&
+                        randomTop < enemy.top + enemy.height &&
+                        randomTop + img.height > enemy.top
+                    );
+                });
+
+                if (positionValid) {
+                    img.set({
+                        left: randomLeft,
+                        top: randomTop,
+                        selectable: false
+                    });
+
+                    enemies.push(img);
+                    canvas.add(img);
+
+                    const interval = setInterval(() => {
+                        if (!paused && !gameOver) {
+                            img.top += 2; // Enemy moves downwards
+                            if (img.top > canvasHeight) {
+                                clearInterval(interval);
+                                canvas.remove(img);
+                                enemies = enemies.filter(e => e !== img); // Remove out-of-bound enemy
+                            }
+                            canvas.renderAll();
+                        } else {
+                            clearInterval(interval); // Stop moving the enemy if game is over or paused
+                        }
+                    }, 20);
                 }
-            }, 20);
+            }
         });
     }
-}
-        // Spawn enemies at regular intervals
-        setInterval(spawnEnemy, 1500); // Spawn every 1.5 second
+}        // Spawn enemies at regular intervals
+        setInterval(spawnEnemy, 3000); // Spawn every 3 second
 
         // Function to check if two objects are colliding
         function isColliding(rect1, rect2) {
