@@ -9,11 +9,12 @@
 <body>
     <canvas id="renderCanvas" style="width: 100%; height: 100%;"></canvas>
     <button id="exportButton" style="position: absolute; top: 10px; left: 10px;">Export STL</button>
+    <div id="turnIndicator" style="position: absolute; top: 10px; left: 120px; font-size: 20px;">Turn: White</div>
     <script>
         const canvas = document.getElementById("renderCanvas");
         const engine = new BABYLON.Engine(canvas, true);
         let currentTurn = "white"; // Track whose turn it is
-        let selectedPiece = null;
+        const occupiedTiles = {}; // Track occupied tiles by color
 
         const createScene = () => {
             const scene = new BABYLON.Scene(engine);
@@ -34,7 +35,7 @@
                     const tile = BABYLON.MeshBuilder.CreateBox(`tile${row}_${col}`, {size: tileSize}, scene);
                     tile.position = new BABYLON.Vector3(row - boardSize / 2 + 0.5, 0, col - boardSize / 2 + 0.5);
                     const tileMaterial = new BABYLON.StandardMaterial(`tileMat${row}_${col}`, scene);
-                    tileMaterial.diffuseColor = (row + col) % 2 === 0 ? new BABYLON.Color3(1, 1, 1) : new BABYLON.Color3(0.3, 0.2, 0.4);
+                    tileMaterial.diffuseColor = (row + col) % 2 === 0 ? new BABYLON.Color3(4, 7, 1) : new BABYLON.Color3(0.3, 0.2, 0.4);
                     tile.material = tileMaterial;
                 }
             }
@@ -48,7 +49,7 @@
             let piece;
             switch (name) {
                 case "pawn":
-                    piece = BABYLON.MeshBuilder.CreateSphere(name, {diameter: 0.7}, scene);
+                    piece = BABYLON.MeshBuilder.CreateSphere(name, {diameter: 0.5}, scene);
                     break;
                 case "rook":
                     piece = BABYLON.MeshBuilder.CreateBox(name, {size: 0.5}, scene);
@@ -76,76 +77,74 @@
 
             piece.actionManager = new BABYLON.ActionManager(scene);
             piece.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, () => {
-                if (piece.material.diffuseColor.equals(currentTurn === "white" ? new BABYLON.Color3(9, 1, 3) : new BABYLON.Color3(1, 1, 9))) {
-                    selectedPiece = piece;
+                if ((currentTurn === "white" && color.r === 1) || (currentTurn === "black" && color.r === 0)) {
+                    selectedPiece = piece; // Only select if it's the player's turn
                 }
             }));
 
-            piece.name = `${name}_${currentTurn}`; // Name includes the color
+            // Add the piece to the occupied tiles
+            occupiedTiles[position.x + '_' + position.z] = color;
+
             return piece;
         };
 
         const pieces = [];
         // Place pawns
         for (let i = 0; i < 8; i++) {
-            pieces.push(createPiece("pawn", new BABYLON.Vector3(i - 3.5, 0.5, 2.5), new BABYLON.Color3(9, 1, 3))); // White pawns
-            pieces.push(createPiece("pawn", new BABYLON.Vector3(i - 3.5, 0.5, -2.5), new BABYLON.Color3(1, 1, 9))); // Black pawns
+            pieces.push(createPiece("pawn", new BABYLON.Vector3(i - 3.5, 0.5, 2.5), new BABYLON.Color3(1, 1, 1)));
+            pieces.push(createPiece("pawn", new BABYLON.Vector3(i - 3.5, 0.5, -2.5), new BABYLON.Color3(0, 0, 0)));
         }
 
-        // Place other pieces (rooks, knights, bishops, queens, kings) as before...
+        // Place rooks
+        pieces.push(createPiece("rook", new BABYLON.Vector3(-3.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("rook", new BABYLON.Vector3(3.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("rook", new BABYLON.Vector3(-3.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
+        pieces.push(createPiece("rook", new BABYLON.Vector3(3.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
 
-        const placeOtherPieces = () => {
-            // Place rooks
-            pieces.push(createPiece("rook", new BABYLON.Vector3(-3.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("rook", new BABYLON.Vector3(3.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("rook", new BABYLON.Vector3(-3.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
-            pieces.push(createPiece("rook", new BABYLON.Vector3(3.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
+        // Place knights
+        pieces.push(createPiece("knight", new BABYLON.Vector3(-2.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("knight", new BABYLON.Vector3(2.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("knight", new BABYLON.Vector3(-2.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
+        pieces.push(createPiece("knight", new BABYLON.Vector3(2.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
 
-            // Place knights
-            pieces.push(createPiece("knight", new BABYLON.Vector3(-2.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("knight", new BABYLON.Vector3(2.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("knight", new BABYLON.Vector3(-2.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
-            pieces.push(createPiece("knight", new BABYLON.Vector3(2.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
+        // Place bishops
+        pieces.push(createPiece("bishop", new BABYLON.Vector3(-1.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("bishop", new BABYLON.Vector3(1.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("bishop", new BABYLON.Vector3(-1.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
+        pieces.push(createPiece("bishop", new BABYLON.Vector3(1.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
 
-            // Place bishops
-            pieces.push(createPiece("bishop", new BABYLON.Vector3(-1.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("bishop", new BABYLON.Vector3(1.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("bishop", new BABYLON.Vector3(-1.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
-            pieces.push(createPiece("bishop", new BABYLON.Vector3(1.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
+        // Place queens
+        pieces.push(createPiece("queen", new BABYLON.Vector3(-0.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("queen", new BABYLON.Vector3(-0.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
 
-            // Place queens
-            pieces.push(createPiece("queen", new BABYLON.Vector3(-0.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("queen", new BABYLON.Vector3(-0.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
+        // Place kings
+        pieces.push(createPiece("king", new BABYLON.Vector3(0.5, 0.5, 3.5), new BABYLON.Color3(1, 1, 1)));
+        pieces.push(createPiece("king", new BABYLON.Vector3(0.5, 0.5, -3.5), new BABYLON.Color3(0, 0, 0)));
 
-            // Place kings
-            pieces.push(createPiece("king", new BABYLON.Vector3(0.5, 0.5, 3.5), new BABYLON.Color3(9, 1, 3)));
-            pieces.push(createPiece("king", new BABYLON.Vector3(0.5, 0.5, -3.5), new BABYLON.Color3(1, 1, 9)));
-        };
-        placeOtherPieces();
-
-        const movePiece = (piece, targetTile) => {
-            // Validate movement logic here (for simplicity, this example does not validate moves)
-
-            const targetPiece = pieces.find(p => p.position.equals(targetTile.position));
-            if (targetPiece) {
-                // Capture the piece
-                targetPiece.dispose();
-                pieces.splice(pieces.indexOf(targetPiece), 1);
-            }
-
-            piece.position.x = targetTile.position.x;
-            piece.position.z = targetTile.position.z;
-
-            // Change turn
-            currentTurn = currentTurn === "white" ? "black" : "white";
-        };
+        let selectedPiece = null;
 
         scene.onPointerDown = (evt, pickResult) => {
             if (selectedPiece) {
                 const pickedTile = pickResult.pickedMesh;
                 if (pickedTile && pickedTile.name.startsWith("tile")) {
-                    movePiece(selectedPiece, pickedTile);
-                    selectedPiece = null; // Deselect the piece after moving
+                    const targetKey = `${pickedTile.position.x}_${pickedTile.position.z}`;
+                    const targetColor = occupiedTiles[targetKey];
+
+                    // Check if the target tile is occupied by a piece of the same color
+                    if (!targetColor || (targetColor.r === 1 && currentTurn === "black") || (targetColor.r === 0 && currentTurn === "white")) {
+                        selectedPiece.position.x = pickedTile.position.x;
+                        selectedPiece.position.z = pickedTile.position.z;
+
+                        // Update the occupied tiles
+                        delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`]; // Remove the old position
+                        occupiedTiles[targetKey] = selectedPiece.material.diffuseColor; // Add the new position
+
+                        // Switch turn
+                        currentTurn = currentTurn === "white" ? "black" : "white";
+                        document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+
+                        selectedPiece = null; // Deselect the piece
+                    }
                 }
             }
         };
