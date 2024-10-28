@@ -124,26 +124,72 @@
         let selectedPiece = null;
 
         scene.onPointerDown = (evt, pickResult) => {
-            if (selectedPiece) {
+            
+        if (selectedPiece) {
                 const pickedTile = pickResult.pickedMesh;
                 if (pickedTile && pickedTile.name.startsWith("tile")) {
-                    const targetKey = `${pickedTile.position.x}_${pickedTile.position.z}`;
-                    const targetColor = occupiedTiles[targetKey];
+                    const deltaX = Math.abs(pickedTile.position.x - selectedPiece.position.x);
+                    const deltaZ = pickedTile.position.z - selectedPiece.position.z; // Retain sign to check direction
 
-                    // Check if the target tile is occupied by a piece of the same color
-                    if (!targetColor || (targetColor.r === 1 && currentTurn === "black") || (targetColor.r === 0 && currentTurn === "white")) {
-                        selectedPiece.position.x = pickedTile.position.x;
-                        selectedPiece.position.z = pickedTile.position.z;
+                    // Check if selected piece is a pawn
+                    if (selectedPiece.name === "pawn") {
+                        const maxMoveDistance = selectedPiece.hasMoved ? 1 : 2;
 
-                        // Update the occupied tiles
-                        delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`]; // Remove the old position
-                        occupiedTiles[targetKey] = selectedPiece.material.diffuseColor; // Add the new position
+                        // Determine if move is forward based on pawn color
+                        const isForwardMove = (selectedPiece.material.diffuseColor.r === 1 && deltaZ < 0) ||  // White pawn moves forward (negative Z)
+                                            (selectedPiece.material.diffuseColor.r === 0 && deltaZ > 0);   // Black pawn moves forward (positive Z)
 
-                        // Switch turn
-                        currentTurn = currentTurn === "white" ? "black" : "white";
-                        document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                        // Check if tile in front is empty for forward movement
+                        const targetKey = `${pickedTile.position.x}_${pickedTile.position.z}`;
+                        const isPathClear = !occupiedTiles[targetKey];
 
-                        selectedPiece = null; // Deselect the piece
+                        // Capture conditions
+                        const isDiagonalMove = deltaX === 1 && Math.abs(deltaZ) === 1; // Only diagonal moves by 1 tile
+                        const targetPieceColor = occupiedTiles[targetKey];
+
+                        // Determine if the target piece is an opponent piece
+                        const isOpponentPiece = targetPieceColor &&
+                            ((selectedPiece.material.diffuseColor.r === 1 && targetPieceColor.r === 0) || 
+                            (selectedPiece.material.diffuseColor.r === 0 && targetPieceColor.r === 1));
+
+                        // Forward move if path is clear
+                        if (isForwardMove && deltaX === 0 && Math.abs(deltaZ) <= maxMoveDistance && isPathClear) {
+                            selectedPiece.position.x = pickedTile.position.x;
+                            selectedPiece.position.z = pickedTile.position.z;
+                            selectedPiece.hasMoved = true;
+
+                            // Update occupied tiles
+                            delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`];
+                            occupiedTiles[targetKey] = selectedPiece.material.diffuseColor;
+
+                            // Switch turn
+                            currentTurn = currentTurn === "white" ? "black" : "white";
+                            document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                            selectedPiece = null; // Deselect the piece
+
+                        // Capture move if opponent piece is on diagonal tile
+                        } else if (isForwardMove && isDiagonalMove && isOpponentPiece) {
+                            selectedPiece.position.x = pickedTile.position.x;
+                            selectedPiece.position.z = pickedTile.position.z;
+                            selectedPiece.hasMoved = true;
+
+                            // Capture opponent piece
+                            const capturedPiece = pieces.find(p => p.position.x === pickedTile.position.x && p.position.z === pickedTile.position.z);
+                            if (capturedPiece) {
+                                capturedPiece.dispose(); // Remove the captured piece from the scene
+                            }
+
+                            // Update occupied tiles
+                            delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`];
+                            occupiedTiles[targetKey] = selectedPiece.material.diffuseColor;
+
+                            // Switch turn
+                            currentTurn = currentTurn === "white" ? "black" : "white";
+                            document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                            selectedPiece = null; // Deselect the piece
+                        }
+                    } else {
+                        // Other piece movement logic
                     }
                 }
             }
