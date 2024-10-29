@@ -44,7 +44,7 @@
         };
 
         const scene = createScene();
-
+        
         const createPiece = (name, position, color) => {
             let piece;
             switch (name) {
@@ -130,8 +130,15 @@
                 if (pickedTile && pickedTile.name.startsWith("tile")) {
                     const deltaX = Math.abs(pickedTile.position.x - selectedPiece.position.x);
                     const deltaZ = pickedTile.position.z - selectedPiece.position.z; // Retain sign to check direction
+                    const targetKey = `${pickedTile.position.x}_${pickedTile.position.z}`;
+                    const targetPieceColor = occupiedTiles[targetKey];
+                    const isOpponentPiece = targetPieceColor &&
+                        ((selectedPiece.material.diffuseColor.r === 1 && targetPieceColor.r === 0) || 
+                        (selectedPiece.material.diffuseColor.r === 0 && targetPieceColor.r === 1));
 
-                    // Check if selected piece is a pawn
+                    let validMove = false;
+                    
+                    ///logic of the pawn movement 
                     if (selectedPiece.name === "pawn") {
                         const maxMoveDistance = selectedPiece.hasMoved ? 1 : 2;
 
@@ -188,8 +195,196 @@
                             document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
                             selectedPiece = null; // Deselect the piece
                         }
-                    } else {
-                        // Other piece movement logic
+                    } 
+                    ///Logic of the knight movement
+                    else if (selectedPiece.name === "knight") {
+                        // Knights move in an L-shape: 2 steps in one direction, 1 step in the other
+                        validMove = (deltaX === 2 && Math.abs(deltaZ) === 1) || (Math.abs(deltaX) === 1 && Math.abs(deltaZ) === 2);
+                        
+                        if (validMove) {
+                            // Move the knight
+                            selectedPiece.position.x = pickedTile.position.x;
+                            selectedPiece.position.z = pickedTile.position.z;
+
+                            // Update occupied tiles
+                            delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`];
+                            occupiedTiles[targetKey] = selectedPiece.material.diffuseColor;
+
+                            // Switch turn
+                            currentTurn = currentTurn === "white" ? "black" : "white";
+                            document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                            selectedPiece = null; // Deselect the piece
+                        }
+                    }
+
+
+                    else if (selectedPiece.name === "rook") {
+                        // Rooks move in straight lines along either the X or Z axis
+                        if ((deltaX === 0 && deltaZ !== 0) || (deltaX !== 0 && deltaZ === 0)) {
+                            // Check if the path is clear
+                            let pathClear = true;
+                            const stepX = deltaX === 0 ? 0 : (pickedTile.position.x > selectedPiece.position.x ? 1 : -1);
+                            const stepZ = deltaZ === 0 ? 0 : (pickedTile.position.z > selectedPiece.position.z ? 1 : -1);
+                            let currentX = selectedPiece.position.x + stepX;
+                            let currentZ = selectedPiece.position.z + stepZ;
+
+                            while ((currentX !== pickedTile.position.x || currentZ !== pickedTile.position.z) && pathClear) {
+                                if (occupiedTiles[`${currentX}_${currentZ}`]) {
+                                    pathClear = false;
+                                }
+                                currentX += stepX;
+                                currentZ += stepZ;
+                            }
+
+                            // If the path is clear, move the rook
+                            if (pathClear) {
+                                selectedPiece.position.x = pickedTile.position.x;
+                                selectedPiece.position.z = pickedTile.position.z;
+
+                                // Update occupied tiles
+                                delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`];
+                                occupiedTiles[targetKey] = selectedPiece.material.diffuseColor;
+
+                                // Switch turn
+                                currentTurn = currentTurn === "white" ? "black" : "white";
+                                document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                                selectedPiece = null; // Deselect the piece
+                            }
+                        }
+                    }
+
+                    else if (selectedPiece.name === "bishop") {
+                        // Check if move is a valid diagonal move
+                        if (Math.abs(deltaX) === Math.abs(deltaZ)) {
+                            let pathClear = true;
+
+                            // Calculate the step direction for both X and Z
+                            const stepX = (pickedTile.position.x > selectedPiece.position.x) ? 1 : -1;
+                            const stepZ = (pickedTile.position.z > selectedPiece.position.z) ? 1 : -1;
+
+                            // Start at the position next to the selected piece and check each tile along the diagonal
+                            let currentX = selectedPiece.position.x + stepX;
+                            let currentZ = selectedPiece.position.z + stepZ;
+
+                            while (currentX !== pickedTile.position.x && currentZ !== pickedTile.position.z) {
+                                const positionKey = `${currentX}_${currentZ}`;
+                                
+                                // Check if the tile is occupied; if so, path is blocked
+                                if (occupiedTiles[positionKey]) {
+                                    pathClear = false;
+                                    break;
+                                }
+
+                                // Move one step further along the diagonal path
+                                currentX += stepX;
+                                currentZ += stepZ;
+                            }
+
+                            // If path is clear, execute the move
+                            if (pathClear) {
+                                // Capture logic if there's an opponent piece on the target tile
+                                const targetPieceColor = occupiedTiles[targetKey];
+                                const isOpponentPiece = targetPieceColor &&
+                                    ((selectedPiece.material.diffuseColor.r === 1 && targetPieceColor.r === 0) || 
+                                    (selectedPiece.material.diffuseColor.r === 0 && targetPieceColor.r === 1));
+                                
+                                if (!targetPieceColor || isOpponentPiece) {
+                                    selectedPiece.position.x = pickedTile.position.x;
+                                    selectedPiece.position.z = pickedTile.position.z;
+
+                                    // Capture opponent piece if present
+                                    if (isOpponentPiece) {
+                                        const capturedPiece = pieces.find(p => p.position.x === pickedTile.position.x && p.position.z === pickedTile.position.z);
+                                        if (capturedPiece) capturedPiece.dispose();
+                                    }
+
+                                    // Update occupied tiles
+                                    delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`];
+                                    occupiedTiles[targetKey] = selectedPiece.material.diffuseColor;
+
+                                    // Switch turn
+                                    currentTurn = currentTurn === "white" ? "black" : "white";
+                                    document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                                    selectedPiece = null; // Deselect the piece
+                                }
+                            }
+                        }
+                    }
+
+                    else if (selectedPiece.name === "king") {
+                        // King moves one square in any direction
+                        validMove = Math.abs(deltaX) <= 1 && Math.abs(deltaZ) <= 1;
+
+                        if (validMove) {
+                            // Move the king
+                            selectedPiece.position.x = pickedTile.position.x;
+                            selectedPiece.position.z = pickedTile.position.z;
+
+                            // Update occupied tiles
+                            delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`];
+                            occupiedTiles[targetKey] = selectedPiece.material.diffuseColor;
+
+                            // Switch turn
+                            currentTurn = currentTurn === "white" ? "black" : "white";
+                            document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                            selectedPiece = null; // Deselect the piece
+                        }
+                    }
+
+                    else if (selectedPiece.name === "queen") {
+                        // Queen moves like both a rook and a bishop
+                        let pathClear = true;
+
+                        if ((deltaX === 0 && deltaZ !== 0) || (deltaX !== 0 && deltaZ === 0)) {
+                            // Rook-like movement
+                            const stepX = deltaX === 0 ? 0 : (pickedTile.position.x > selectedPiece.position.x ? 1 : -1);
+                            const stepZ = deltaZ === 0 ? 0 : (pickedTile.position.z > selectedPiece.position.z ? 1 : -1);
+                            let currentX = selectedPiece.position.x + stepX;
+                            let currentZ = selectedPiece.position.z + stepZ;
+
+                            while ((currentX !== pickedTile.position.x || currentZ !== pickedTile.position.z) && pathClear) {
+                                if (occupiedTiles[`${currentX}_${currentZ}`]) {
+                                    pathClear = false;
+                                }
+                                currentX += stepX;
+                                currentZ += stepZ;
+                            }
+                        } 
+                        else if (Math.abs(deltaX) === Math.abs(deltaZ)) {
+                            // Bishop-like movement
+                            const stepX = pickedTile.position.x > selectedPiece.position.x ? 1 : -1;
+                            const stepZ = pickedTile.position.z > selectedPiece.position.z ? 1 : -1;
+                            let currentX = selectedPiece.position.x + stepX;
+                            let currentZ = selectedPiece.position.z + stepZ;
+
+                            while ((currentX !== pickedTile.position.x || currentZ !== pickedTile.position.z) && pathClear) {
+                                if (occupiedTiles[`${currentX}_${currentZ}`]) {
+                                    pathClear = false;
+                                }
+                                currentX += stepX;
+                                currentZ += stepZ;
+                            }
+                        } else {
+                            pathClear = false; // Invalid move for queen
+                        }
+
+                        // Move the queen if path is clear
+                        if (pathClear) {
+                            selectedPiece.position.x = pickedTile.position.x;
+                            selectedPiece.position.z = pickedTile.position.z;
+
+                            // Update occupied tiles
+                            delete occupiedTiles[`${selectedPiece.position.x}_${selectedPiece.position.z}`];
+                            occupiedTiles[targetKey] = selectedPiece.material.diffuseColor;
+
+                            // Switch turn
+                            currentTurn = currentTurn === "white" ? "black" : "white";
+                            document.getElementById("turnIndicator").innerText = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+                            selectedPiece = null; // Deselect the piece
+                        }
+                    }
+                    else {
+                        
                     }
                 }
             }
