@@ -31,12 +31,44 @@
             BABYLON.SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "village.glb");
      
             // Create a larger ground
-            const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 50, height: 50 }, scene);
-            const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-            groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.8, 0.5); // Greenish color for the ground
-            ground.material = groundMaterial;
-        
-            
+                                // Create the larger ground (big green square)
+                // Create the larger ground (big green square)
+                const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 50, height: 50 }, scene);
+
+                // Create a material for the ground
+                const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+                groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.8, 0.5); // Greenish color
+                // Enable transparency
+                groundMaterial.alpha = 1; // Base opacity level
+
+
+                // Load an alpha map to define transparent areas (where houses are located)
+                groundMaterial.opacityTexture = new BABYLON.Texture("path/to/alphaMap.png", scene);
+                groundMaterial.opacityTexture.hasAlpha = true; // Ensure alpha is recognized
+
+                // Use a procedural texture to simulate a mixed terrain effect
+                const noiseTexture = new BABYLON.NoiseProceduralTexture("noise", 256, scene);
+                noiseTexture.animationSpeedFactor = 1;///This controls the speed of the color changes
+                noiseTexture.brightness = 0.9; 
+                noiseTexture.octaves = 4;
+
+                // Apply the noise texture as a diffuse texture
+                groundMaterial.diffuseTexture = noiseTexture;
+
+                // Adjust the colors to add dirt and grass patches
+                groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.8, 0.5); // Base green color for grass
+                groundMaterial.specularColor = new BABYLON.Color3(0.3, 0.2, 0.1); // Dull specular to simulate dirt
+
+                // Apply a secondary color for a more patchy look
+                groundMaterial.diffuseFresnelParameters = new BABYLON.FresnelParameters();
+                groundMaterial.diffuseFresnelParameters.bias = 0.1;
+                groundMaterial.diffuseFresnelParameters.power = 2;
+                groundMaterial.diffuseFresnelParameters.leftColor = new BABYLON.Color3(0.3, 0.2, 0.1); // Brown for dirt
+                groundMaterial.diffuseFresnelParameters.rightColor = new BABYLON.Color3(0.5, 0.8, 0.5); // Green for grass
+
+                // Assign the material to the ground
+                ground.material = groundMaterial;
+                            
             // Create the front wall (without the arc hole for now)
             const wallHeight = 5;
             const wallThickness = 0.9;
@@ -71,7 +103,6 @@
             wallMaterial.diffuseColor = new BABYLON.Color3(0.6, 0.6, 0.6); // Grey color for the wall
             wallWithDoor.material = wallMaterial;
 
-
             // Create the other walls
             const wallPositions = [
                 { position: new BABYLON.Vector3(0, wallHeight / 2, wallLength / 2), rotation: Math.PI }, // Back wall
@@ -92,8 +123,8 @@
             }
             
             // Create towers at each corner
-            const towerHeight = 8;
-            const towerRadius = 1;
+            const towerHeight = 6;
+            const towerRadius = 1.5;
             const towerMaterial = new BABYLON.StandardMaterial("towerMaterial", scene);
             towerMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.5, 0.3); // Brown color for the tower
 
@@ -105,12 +136,95 @@
                 new BABYLON.Vector3(wallLength / 2, towerHeight / 2, -wallLength / 2)  // Back-right
             ];
 
+            // Create the dark gray material for the towers and cones
+            const rockMaterial = new BABYLON.StandardMaterial("rockMaterial", scene);
+            rockMaterial.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.2); // Dark gray color to simulate rocks
+
+
             cornerPositions.forEach(position => {
+                // Create the base tower
                 const tower = BABYLON.MeshBuilder.CreateCylinder("tower", { height: towerHeight, diameter: towerRadius }, scene);
-                tower.position = position;
-                tower.material = towerMaterial;
+                    tower.position = position;
+                    tower.material = rockMaterial; // Apply dark gray material
+
+                    // Create the cone for the roof
+                    const cone = BABYLON.MeshBuilder.CreateCylinder("cone", { height: 2, diameterTop: 0, diameterBottom: towerRadius * 1.5, tessellation: 32 }, scene);
+                    cone.position = new BABYLON.Vector3(position.x, position.y + towerHeight / 2 + 1, position.z); // Adjust position to be on top of the tower
+                    cone.material = rockMaterial; // Apply dark gray material
             });
+
+                        // Function to create a simple tree model
+            function createTree(scene, position) {
+                // Create the trunk
+                const trunk = BABYLON.MeshBuilder.CreateCylinder("trunk", { height: 2, diameter: 0.3 }, scene);
+                const trunkMaterial = new BABYLON.StandardMaterial("trunkMaterial", scene);
+                trunkMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.2, 0); // Brown color for the trunk
+                trunk.material = trunkMaterial;
+                trunk.position = new BABYLON.Vector3(position.x, 1, position.z); // Center the trunk
+
+                // Create the leaves
+                const leaves = BABYLON.MeshBuilder.CreateSphere("leaves", { diameter: 1.5, segments: 16 }, scene);
+                const leavesMaterial = new BABYLON.StandardMaterial("leavesMaterial", scene);
+                leavesMaterial.diffuseColor = new BABYLON.Color3(0.1, 0.5, 0.1); // Green color for the leaves
+                leaves.material = leavesMaterial;
+                leaves.position = new BABYLON.Vector3(position.x, 2.5, position.z); // Position above the trunk
+            }
+
+            // Generate trees randomly within the bounds of the green square (ground)
+            const numTrees = 20; // Number of trees to create
+            const groundSize = 50; // Size of the ground
+
+            for (let i = 0; i < numTrees; i++) {
+                const randomX = Math.random() * groundSize - groundSize / 2; // Random X within the ground bounds
+                const randomZ = Math.random() * groundSize - groundSize / 2; // Random Z within the ground bounds
+
+                // Ensure trees do not overlap with structures by checking a simple boundary (optional)
+                if (Math.abs(randomX) > 5 && Math.abs(randomZ) > 5) {
+                    createTree(scene, new BABYLON.Vector3(randomX, 0, randomZ));
+                }
+            }
             
+            // Create the sun (a directional light)
+            const sun = new BABYLON.DirectionalLight("sunLight", new BABYLON.Vector3(-1, -1, -1), scene);
+            sun.position = new BABYLON.Vector3(0, 50, 0); // Position high in the sky
+            sun.intensity = 1.0; // Adjust as needed
+
+            // Optional: Create a visible representation of the sun (a sphere)
+            const sunSphere = BABYLON.MeshBuilder.CreateSphere("sunSphere", { diameter: 2 }, scene);
+            sunSphere.position = sun.position;
+            sunSphere.material = new BABYLON.StandardMaterial("sunMaterial", scene);
+            sunSphere.material.emissiveColor = new BABYLON.Color3(1, 1, 0); // Bright yellow
+
+            // Animate the sun to move across the sky
+            scene.registerBeforeRender(() => {
+                const time = performance.now() * 0.00099; //Sun speed
+                const x = 50 * Math.sin(time); // Circular path 
+                const z = 50 * Math.cos(time);
+                const y = 30; // Fixed height 
+                // Update sun position
+                sun.position = new BABYLON.Vector3(x, y, z);
+                sun.direction = new BABYLON.Vector3(-x, -y, -z).normalize(); // Point the light towards the center of the scene
+
+                // Move the sun sphere for visualization
+                sunSphere.position = sun.position;
+            });
+
+             // Enable shadows
+                sun.shadowEnabled = true;
+                const shadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
+                shadowGenerator.useBlurExponentialShadowMap = true;
+                shadowGenerator.blurKernel = 32;
+
+                // Add shadow casters and receivers
+                [/* list of meshes to cast shadows */].forEach(mesh => {
+                    shadowGenerator.addShadowCaster(mesh);
+                    mesh.receiveShadows = true;
+                });
+                ground.receiveShadows = true;
+
+
+
+
             const track = [];
             track.push(new walk(86, 7));
             track.push(new walk(-85, 14.8));
@@ -121,9 +235,6 @@
             track.push(new walk(42, 37.5));
             track.push(new walk(-98, 45.2));
             track.push(new walk(0, 47))
-
-            
-
             
 
             // Dude
