@@ -29,10 +29,8 @@
             
 
             BABYLON.SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "village.glb");
-     
-            // Create a larger ground
-                                // Create the larger ground (big green square)
-                // Create the larger ground (big green square)
+
+                // Create the larger ground 
                 const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 50, height: 50 }, scene);
 
                 // Create a material for the ground
@@ -153,7 +151,7 @@
                     cone.material = rockMaterial; // Apply dark gray material
             });
 
-                        // Function to create a simple tree model
+            // Function to create a simple tree model
             function createTree(scene, position) {
                 // Create the trunk
                 const trunk = BABYLON.MeshBuilder.CreateCylinder("trunk", { height: 2, diameter: 0.3 }, scene);
@@ -200,7 +198,8 @@
                 const time = performance.now() * 0.00099; //Sun speed
                 const x = 50 * Math.sin(time); // Circular path 
                 const z = 50 * Math.cos(time);
-                const y = 30; // Fixed height 
+                const y = 30;
+
                 // Update sun position
                 sun.position = new BABYLON.Vector3(x, y, z);
                 sun.direction = new BABYLON.Vector3(-x, -y, -z).normalize(); // Point the light towards the center of the scene
@@ -222,6 +221,34 @@
                 });
                 ground.receiveShadows = true;
 
+
+
+                // Creation clouds and place them randomly over the village
+                function createClouds(scene, numberOfClouds = 5) {
+                    const cloudMaterial = new BABYLON.StandardMaterial("cloudMaterial", scene);
+                    cloudMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1); // White color for clouds
+                    cloudMaterial.alpha = 0.8; // Slight transparency to give a cloud-like appearance
+
+                    for (let i = 0; i < numberOfClouds; i++) {
+                        // Create a cloud using a few overlapping spheres
+                        const cloud = new BABYLON.MeshBuilder.CreateSphere(`cloud${i}`, {
+                            diameter: Math.random() * 3 + 3, // Random diameter between 3 and 6
+                            segments: 16
+                        }, scene);
+
+                        // Random position above the village
+                        cloud.position = new BABYLON.Vector3(
+                            (Math.random() - 0.5) * 40, // Random X within the village range
+                            Math.random() * 10 + 10, // Y height between 10 and 20 units
+                            (Math.random() - 0.5) * 40 // Random Z within the village range
+                        );
+
+                        cloud.material = cloudMaterial;
+                    }
+                }
+
+                // Call the createClouds function after setting up your village
+                createClouds(scene);
 
 
 
