@@ -8,6 +8,11 @@
 </head>
 <body>
   <div class="tracker">
+      <!-- Budget setup -->
+    <form id="budget-form">
+      <input type="number" id="budget-input" placeholder="Set your budget" required />
+      <button type="submit">Set Budget</button>
+    </form>
     <h2>Expense Tracker</h2>
     <form id="expense-form">
       <input type="text" id="desc" placeholder="Description" required />
@@ -15,7 +20,9 @@
       <button type="submit">Add Expense</button>
     </form>
     <ul id="expense-list"></ul>
-    <div class="total">Total: $<span id="total">0.00</span></div>
+    <div class="total">Total Spent: $<span id="total">0.00</span></div>
+    <div class="remaining">Remaining Budget: $<span id="remaining">0.00</span></div>  
+  
   </div>
 
   <script src="script.js"></script>
