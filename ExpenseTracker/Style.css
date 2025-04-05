@@ -1,3 +1,4 @@
+/* General reset and box sizing */
 * {
   margin: 0;
   padding: 0;
@@ -5,26 +6,56 @@
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-  min-height: 100vh;
+  font-family: sans-serif;
+  padding: 20px;
+  background-color: #f3f4f6;
+  color: #1e293b;
+}
+
+.dashboard {
   display: flex;
+  gap: 20px;
   justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
-/* Container */
 .tracker {
-  background: #ffffff;
-  padding: 30px 25px;
+  background: white;
   border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 420px;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  min-width: 280px;
+  flex: 1;
+  max-width: 400px;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent content overflow */
 }
 
+.tracker h3 {
+  margin-top: 0;
+  word-wrap: break-word; /* Ensures long text wraps within box */
+}
+
+ul#expense-list {
+  list-style: none;
+  padding-left: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+ul#expense-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 500;
+  word-wrap: break-word; /* Prevents text from overflowing */
+  word-break: break-word; /* Ensure long text breaks appropriately */
+}
+
+/* On hover, gently move the tracker box */
 .tracker:hover {
   transform: translateY(-2px);
 }
@@ -96,6 +127,7 @@ li {
   font-size: 14.5px;
   color: #374151;
   transition: background-color 0.2s ease;
+  word-wrap: break-word; /* Ensures long text wraps inside the box */
 }
 
 li:hover {
@@ -117,4 +149,11 @@ li:hover {
   font-size: 16px;
   margin-top: 6px;
   color: #1e40af;
+}
+
+/* Ensure canvas is responsive */
+canvas {
+  margin-top: 20px;
+  max-width: 100%;
+  display: block; /* Prevent canvas from overflowing */
 }
