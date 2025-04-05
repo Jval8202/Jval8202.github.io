@@ -1,69 +1,113 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f4f7fa;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: 40px;
+  align-items: center;
+  padding: 40px 20px;
 }
 
+/* Container */
 .tracker {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  background: #ffffff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  transition: all 0.3s ease;
 }
 
+.tracker:hover {
+  transform: translateY(-2px);
+}
+
+/* Heading */
 h2 {
   text-align: center;
-  color: #333;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  color: #1f2937;
+  font-size: 1.6rem;
   margin-bottom: 20px;
 }
 
-input, button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
+input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  background-color: #f9fafb;
+  transition: border 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #ffffff;
+}
+
+/* Button */
 button {
-  background-color: #4caf50;
-  color: white;
+  padding: 12px;
+  background-color: #3b82f6;
+  color: #ffffff;
   border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #2563eb;
 }
 
+/* Expense List */
 ul {
   list-style: none;
   padding: 0;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
 }
 
 li {
-  padding: 10px;
-  background: #e9f5ee;
-  margin-bottom: 8px;
-  border-radius: 6px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 14.5px;
+  color: #374151;
+  transition: background-color 0.2s ease;
 }
 
+li:hover {
+  background-color: #e2e8f0;
+}
+
+/* Total Display */
 .total {
   text-align: right;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 16px;
   margin-top: 10px;
-  color: #444;
+  color: #1e40af;
 }
