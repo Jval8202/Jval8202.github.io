@@ -6,7 +6,7 @@ const amount = document.getElementById('amount');
 const list = document.getElementById('expense-list');
 const total = document.getElementById('total');
 const remaining = document.getElementById('remaining');
-
+///Script
 let totalAmount = 0;
 let budget = 0;
 
