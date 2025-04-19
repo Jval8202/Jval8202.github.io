@@ -55,10 +55,6 @@ ul#expense-list li {
   word-break: break-word; /* Ensure long text breaks appropriately */
 }
 
-/* On hover, gently move the tracker box */
-.tracker:hover {
-  transform: translateY(-2px);
-}
 
 /* Heading */
 h2 {
@@ -156,4 +152,88 @@ canvas {
   margin-top: 20px;
   max-width: 100%;
   display: block; /* Prevent canvas from overflowing */
+}
+
+.theme-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 999;
+  transition: background 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark {
+  background-color: #1f2937;
+  color: #f1f5f9;
+}
+
+body.dark .tracker {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+body.dark input,
+body.dark button {
+  background-color: #475569;
+  color: #f1f5f9;
+  border-color: #64748b;
+}
+
+body.dark input::placeholder {
+  color: #cbd5e1;
+}
+
+body.dark ul#expense-list li {
+  background: #475569;
+  color: #f1f5f9;
+}
+
+body.dark li:hover {
+  background-color: #64748b;
+}
+
+body.dark canvas {
+  background-color: #1e293b;
+}
+body.dark .total{
+  color: #f1f5f9; /* white or near-white */
+}
+body.dark .remaining {
+  color: #f5f5f5; /* white or near-white */
+}
+body.dark h2{
+  color: #f1f5f9; /* white or near-white */
+}
+.pdf-export-mode .form-section {
+  display: none !important;
+}
+
+.alert {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fef2f2;
+  color: #b91c1c;
+  padding: 12px 20px;
+  border: 1px solid #fca5a5;
+  border-radius: 12px;
+  font-weight: bold;
+  z-index: 9999;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.alert.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-10px);
 }
