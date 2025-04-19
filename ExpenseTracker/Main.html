@@ -4,47 +4,57 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expense Tracker</title>
-  <link rel="stylesheet" href="Style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="dashboard">
-    <!-- Pie Chart (Left) -->
-    <div class="tracker pie-container">
-      <h3>Spending Breakdown</h3>
-      <canvas id="categoryChart" height="200"></canvas>
-    </div>
+  <button id="toggle-theme" class="theme-button">🌙 Dark Mode</button>
+  <button id="download-pdf" class="theme-button" style="top: 60px;">📄 Save as PDF</button>
+  <div id="budget-alert" class="alert hidden">
+    ⚠️ Warning: You are over budget!
+  </div>
+  <div id="pdf-content">
+    <div class="dashboard">
+      <!-- Pie Chart (Left) -->
+      <div class="tracker pie-container">
+        <h3>Spending Breakdown</h3>
+        <canvas id="categoryChart" height="200"></canvas>
+      </div>
   
-    <!-- Main Tracker (Middle) -->
-    <div class="tracker main-container">
-      <!-- Budget setup -->
-      <form id="budget-form">
-        <input type="number" id="budget-input" placeholder="Set your budget" required />
-        <button type="submit">Set Budget</button>
-      </form>
+      <!-- Main Tracker (Middle) -->
+      <div class="tracker main-container">
+        <!-- Form section to be hidden during PDF export -->
+        <div class="form-section">
+          <!-- Budget setup -->
+          <form id="budget-form">
+            <input type="number" id="budget-input" placeholder="Set your budget" required />
+            <button type="submit">Set Budget</button>
+          </form>
   
-      <h2>Expense Tracker</h2>
+          <h2>Expense Tracker</h2>
   
-      <form id="expense-form">
-        <input type="text" id="desc" placeholder="Description" required />
-        <input type="number" id="amount" placeholder="Amount" required />
-        <button type="submit">Add Expense</button>
-      </form>
+          <form id="expense-form">
+            <input type="text" id="desc" placeholder="Description" required />
+            <input type="number" id="amount" placeholder="Amount" required />
+            <button type="submit">Add Expense</button>
+          </form>
+        </div>
   
-      <div class="total">Total Spent: $<span id="total">0.00</span></div>
-      <div class="remaining">Remaining Budget: $<span id="remaining">0.00</span></div>
+        <!-- Summary section stays visible -->
+        <div class="total">Total Spent: $<span id="total">0.00</span></div>
+        <div class="remaining">Remaining Budget: $<span id="remaining">0.00</span></div>
   
-      <canvas id="budgetChart" height="200"></canvas>
-    </div>
+        <canvas id="budgetChart" height="200"></canvas>
+      </div>
   
-    <!-- Expense History (Right) -->
-    <div class="tracker expense-container">
-      <h3>Expense History</h3>
-      <ul id="expense-list"></ul>
+      <!-- Expense History-->
+      <div class="tracker expense-container">
+        <h3>Expense History</h3>
+        <ul id="expense-list"></ul>
+      </div>
     </div>
   </div>
-  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
