@@ -61,10 +61,24 @@ function updateRemaining() {
   const remain = budget - totalAmount;
   remaining.textContent = remain.toFixed(2);
 
+  // Remove over-budget styles
+  remaining.style.color = '';
+  total.style.color = '';
+
+  // Get alert element
+  const alertBox = document.getElementById('budget-alert');
+  
   if (remain < 0) {
     remaining.style.color = '#dc2626'; // red
+    total.style.color = '#dc2626';
+
+    alertBox.classList.remove('hidden');
+
+    setTimeout(() => {
+      alertBox.classList.add('hidden');
+    }, 4000);
   } else {
-    remaining.style.color = '#1e40af'; // blue
+    alertBox.classList.add('hidden');
   }
 }
 
@@ -143,3 +157,36 @@ function updateCategoryChart() {
   });
   categoryChart.update();
 }
+
+const toggleThemeBtn = document.getElementById('toggle-theme');
+
+toggleThemeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+
+  // Update button text/icon based on current mode
+  if (document.body.classList.contains('dark')) {
+    toggleThemeBtn.textContent = '☀️ Light Mode';
+  } else {
+    toggleThemeBtn.textContent = '🌙 Dark Mode';
+  }
+});
+
+const downloadBtn = document.getElementById('download-pdf');
+
+downloadBtn.addEventListener('click', () => {
+  const element = document.getElementById('pdf-content');
+
+  document.body.classList.add('pdf-export-mode');
+
+  const opt = {
+    margin:       0.5,
+    filename:     `Budget_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`,
+    image:        { type: 'jpeg', quality: 1 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+  };
+
+  html2pdf().set(opt).from(element).save().then(() => {
+    document.body.classList.remove('pdf-export-mode');
+  });
+});
