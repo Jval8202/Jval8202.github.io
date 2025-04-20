@@ -43,10 +43,10 @@ expenseForm.addEventListener('submit', function(e) {
     total.textContent = totalAmount.toFixed(2);
   
     // Update category totals
-    if (!categories[description]) {
-      categories[description] = 0;
+    if (!categories[categoryValue]) {
+      categories[categoryValue] = 0;
     }
-    categories[description] += value;
+    categories[categoryValue] += value;
   
     updateRemaining();
     updateChart();
