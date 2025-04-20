@@ -27,12 +27,13 @@ expenseForm.addEventListener('submit', function(e) {
 
   const description = desc.value.trim();
   const value = parseFloat(amount.value);
+  const categoryValue = category.value;
 
   if (description && !isNaN(value) && value > 0) {
     // Add to list
     const li = document.createElement('li');
     li.innerHTML = `
-      <span>${description}</span>
+      <span><strong>(${categoryValue})</strong> ${description}</span>
       <span>$${value.toFixed(2)}</span>
     `;
     list.appendChild(li);
@@ -54,6 +55,7 @@ expenseForm.addEventListener('submit', function(e) {
     // Reset fields
     desc.value = '';
     amount.value = '';
+    category.value = 'Category';
   }
 });
 
