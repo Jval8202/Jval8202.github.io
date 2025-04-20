@@ -33,8 +33,15 @@
           <h2>Expense Tracker</h2>
   
           <form id="expense-form">
-            <input type="text" id="desc" placeholder="Description" required />
-            <input type="number" id="amount" placeholder="Amount" required />
+            <input type="text" id="desc" placeholder="Description" aria-label="description" required />
+            <input type="number" id="amount" placeholder="Amount" aria-label="amount" required />
+            <select id="category" placeholder="Category" aria-label="category" required>
+              <option disabled selected hidden>Category</option>
+              <option value="Dining">Dining</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Groceries">Groceries</option>
+              <option value="Utilities">Utilities</option>
+            </select>
             <button type="submit">Add Expense</button>
           </form>
         </div>
