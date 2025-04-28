@@ -53,14 +53,54 @@
   
         <canvas id="budgetChart" height="200"></canvas>
       </div>
-  
+  <!-- Monthly Category Spending (New Chart) -->
       <!-- Expense History-->
       <div class="tracker expense-container">
         <h3>Expense History</h3>
         <ul id="expense-list"></ul>
       </div>
+      
+      <div class="tracker monthly-category-container">
+        <h3>Monthly Spending by Category</h3>
+      
+        <form id="monthly-category-form">
+          <select id="month-category">
+            <option value="" disabled selected>Select Category</option>
+            <!-- Filled dynamically or manually -->
+            <option value="Dining">Dining</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Utilities">Utilities</option>
+          </select>
+      
+          <select id="month-name">
+            <option value="" disabled selected>Select Month</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+          </select>
+      
+          <input type="number" id="month-amount" placeholder="Amount" required />
+          <button type="submit">Add</button>
+        </form>
+      
+        <canvas id="monthlyCategoryChart" height="200"></canvas>
+      </div>
+      
+
     </div>
   </div>
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
