@@ -15,7 +15,7 @@ body {
 .dashboard {
   display: flex;
   gap: 20px;
-  justify-content: center;
+  justify-content: flex-start;  /* Changed from 'center' to 'flex-start' */
   align-items: flex-start;
   flex-wrap: wrap;
 }
@@ -182,18 +182,19 @@ body.dark .tracker {
 }
 
 body.dark input,
-body.dark button {
+body.dark button,
+body.dark select  {
   background-color: #475569;
-  color: #f1f5f9;
+  color: #ffffff;
   border-color: #64748b;
 }
 
 body.dark input::placeholder {
-  color: #cbd5e1;
+  color: #e7e6f0;
 }
 
 body.dark ul#expense-list li {
-  background: #475569;
+  background: #5a6f8d;
   color: #f1f5f9;
 }
 
