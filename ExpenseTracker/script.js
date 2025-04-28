@@ -6,6 +6,9 @@ const amount = document.getElementById('amount');
 const list = document.getElementById('expense-list');
 const total = document.getElementById('total');
 const remaining = document.getElementById('remaining');
+const monthCategorySelect = document.getElementById('month-category');
+const monthNameSelect = document.getElementById('month-name');
+const monthAmountInput = document.getElementById('month-amount');
 
 let totalAmount = 0;
 let budget = 0;
@@ -67,18 +70,13 @@ function updateRemaining() {
   remaining.style.color = '';
   total.style.color = '';
 
-  // Get alert element
   const alertBox = document.getElementById('budget-alert');
   
   if (remain < 0) {
     remaining.style.color = '#dc2626'; // red
     total.style.color = '#dc2626';
-
     alertBox.classList.remove('hidden');
-
-    setTimeout(() => {
-      alertBox.classList.add('hidden');
-    }, 4000);
+    setTimeout(() => alertBox.classList.add('hidden'), 4000);
   } else {
     alertBox.classList.add('hidden');
   }
@@ -101,29 +99,27 @@ const budgetChart = new Chart(ctx, {
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          stepSize: 50
-        }
+        ticks: { stepSize: 50 }
       }
     }
   }
 });
 
-// Function to update chart
 function updateChart() {
   budgetChart.data.datasets[0].data = [budget, totalAmount];
   budgetChart.update();
 }
 
-// Track categories and amounts
+// Category tracking
 const categories = {};
 const categoryColors = {};
 
+let lastHue = 0;
 function generateColor() {
-  const r = Math.floor(Math.random() * 200);
-  const g = Math.floor(Math.random() * 200);
-  const b = Math.floor(Math.random() * 200);
-  return `rgb(${r}, ${g}, ${b})`;
+  lastHue = (lastHue + 47) % 360;
+  const saturation = 70;
+  const lightness = 55;
+  return `hsl(${lastHue}, ${saturation}%, ${lightness}%)`;
 }
 
 // Pie chart setup
@@ -147,7 +143,6 @@ const categoryChart = new Chart(catCtx, {
   }
 });
 
-// Update pie chart
 function updateCategoryChart() {
   categoryChart.data.labels = Object.keys(categories);
   categoryChart.data.datasets[0].data = Object.values(categories);
@@ -160,34 +155,105 @@ function updateCategoryChart() {
   categoryChart.update();
 }
 
-const toggleThemeBtn = document.getElementById('toggle-theme');
+const categoryColorsMonthly = {
+  "Dining": "#4ade80",         // Green
+  "Entertainment": "#60a5fa",       // Blue
+  "Groceries": "#facc15", // Yellow
+  "Shopping": "#f472b6",       // Pink
+  "Utilities": "#FFA500"       // Orange
+};
 
+
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+  'July', 'August', 'September', 'October', 'November', 'December'];
+
+const monthlyData = {}; 
+
+function populateMonthInputs() {
+monthlyInputs.innerHTML = '';
+monthNames.forEach(month => {
+const input = document.createElement('input');
+input.type = 'number';
+input.placeholder = month;
+input.name = month;
+input.classList.add('month-input');
+monthlyInputs.appendChild(input);
+});
+}
+
+monthCategorySelect.addEventListener('change', populateMonthInputs);
+
+const monthlyForm = document.getElementById('monthly-category-form');
+monthlyForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const selectedCategory = monthCategorySelect.value;
+  const selectedMonth = monthNameSelect.value;
+  const amount = parseFloat(monthAmountInput.value);
+  
+  if (!selectedCategory || !selectedMonth || isNaN(amount)) return;
+  
+  if (!monthlyData[selectedCategory]) {
+    monthlyData[selectedCategory] = Array(12).fill(0); 
+  }
+  
+  const monthIndex = monthNames.indexOf(selectedMonth);
+  if (monthIndex !== -1) {
+    monthlyData[selectedCategory][monthIndex] += amount;
+  }
+  
+  updateMonthlyChart(selectedCategory);
+  
+  // Reset input fields
+  monthAmountInput.value = '';
+});
+const monthlyCtx = document.getElementById('monthlyCategoryChart').getContext('2d');
+const monthlyChart = new Chart(monthlyCtx, {
+type: 'bar',
+data: {
+labels: monthNames,
+datasets: [{
+label: 'Amount Spent ($)',
+data: [],
+backgroundColor: '#34d399',
+borderRadius: 8,
+}]
+},
+options: {
+scales: {
+y: {
+beginAtZero: true
+}
+}
+}
+});
+
+function updateMonthlyChart(category) {
+  monthlyChart.data.datasets[0].data = monthlyData[category];
+  monthlyChart.data.datasets[0].label = `Amount Spent ($) - ${category}`;
+  monthlyChart.data.datasets[0].backgroundColor = categoryColorsMonthly[category] || '#a78bfa';
+  monthlyChart.update();
+}
+
+const toggleThemeBtn = document.getElementById('toggle-theme');
 toggleThemeBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark');
-
-  // Update button text/icon based on current mode
-  if (document.body.classList.contains('dark')) {
-    toggleThemeBtn.textContent = '☀️ Light Mode';
-  } else {
-    toggleThemeBtn.textContent = '🌙 Dark Mode';
-  }
+  toggleThemeBtn.textContent = document.body.classList.contains('dark')
+    ? '☀️ Light Mode'
+    : '🌙 Dark Mode';
 });
 
 const downloadBtn = document.getElementById('download-pdf');
-
 downloadBtn.addEventListener('click', () => {
   const element = document.getElementById('pdf-content');
-
   document.body.classList.add('pdf-export-mode');
-
   const opt = {
-    margin:       0.5,
-    filename:     `Budget_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`,
-    image:        { type: 'jpeg', quality: 1 },
-    html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+    margin: 0.5,
+    filename: `Budget_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`,
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
   };
-
   html2pdf().set(opt).from(element).save().then(() => {
     document.body.classList.remove('pdf-export-mode');
   });
