@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mountain View Dental Clinic</title>
+        <link rel="stylesheet" href="Main.css">
+    </head>
+    <body>
+        <header>
+            <nav>
+                <div class="logo">Mountain View Dental Clinic</div>
+                <div>
+                    <a href="#services">Services</a>
+                    <a href="#team">Our Team</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </nav>
+        </header>
+        
+
+
+<section class="hero">
+<div>
+<h1>Your Smile, Our Priority</h1>
+<p>Mountain View Dental Clinic provides modern and caring dental services for the whole family.</p>
+<button class="hero-btn" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'});">Book Appointment</button>
+</div>
+</section>
+
+
+<section id="services">
+<h2>Our Services</h2>
+<div class="services">
+<div class="service"><h3>Teeth Cleaning</h3></div>
+<div class="service"><h3>Fluoride Treatments</h3></div>
+<div class="service"><h3>Crowns & Bridges</h3></div>
+<div class="service"><h3>Extractions</h3></div>
+<div class="service"><h3>Oral Examinations</h3></div>
+<div class="service"><h3>Fillings</h3></div>
+<div class="service"><h3>Cosmetic Bonding</h3></div>
+<div class="service"><h3>Porcelain Veneers</h3></div>
+<div class="service"><h3>Teeth Whitening</h3></div>
+<div class="service"><h3>Sealants</h3></div>
+<div class="service"><h3>Gum Treatment</h3></div>
+<div class="service"><h3>Root Canals</h3></div>
+<div class="service"><h3>Partial & Complete Dentures</h3></div>
+</div>
+<p class="payment-info">💳 Payment is expected at the time of service. We accept major credit cards, cash, check, and approved insurance.</p>
+</section>
+    <section id="team">
+        <h2>Meet Our Team</h2>
+        <div class="team">
+
+            <div class="member">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Dr. Anna Smith">
+                <h3>Dr. Dianne Hamrick</h3>
+                <p> 
+                   Dianne is a loving mother of
+                    two who has been in the
+                    industry for the past 15 years
+                    and been our dental assistant
+                    for the last 6
+                </p>
+                <p>Orthodontist</p>
+            </div>
+            <div class="member">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Dr. Anna Smith">
+                <h3>Clyde McGill</h3>
+                <p> 
+                    Our dental hygienist has
+                    been a part of our team for
+                    the last 2 years! Clyde
+                    always has a smile on his
+                    face and looks forward to
+                    helping you and your
+                    family.
+                </p>
+                <p>Orthodontist</p>
+            </div>
+            <div class="member">
+                <img src="https://randomuser.me/api/portraits/men/82.jpg" alt="Dr. John Doe">
+                <h3>Dr. Joshi Michailoff</h3>
+                <p> 
+                    Dr. Michailoff is a member of several organizations, including the American Dental
+                    Association, American Academy Cosmetic Dentistry, Academy of General Dentistry, and
+                    American Association of Hospital Dentists. He was recently awarded the Fellowship in
+                    the Academy of General Dentistry, a very prestigious honor.
+                </p>
+                <p>Cosmetic Dentist</p>
+            </div>
+            <div class="member">
+                <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="Dr. Anna Smith">
+                <h3>Benita Jackson</h3>
+                <p> 
+                    Recently graduated NYU
+                    with a degree in Dentistry
+                    and is excited to tackle
+                    new challenges every day!
+                    Our dental assistant for the
+                    last year.
+                </p>
+                <p>Orthodontist</p>
+            </div>
+            <div class="member">
+                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Dr. Anna Smith">
+                <h3>Corey Passey</h3>
+                <p> 
+                   Help welcome the newest
+                    member of the team! Corey is
+                    our friendly and helpful office
+                    manager who has worked at
+                    the clinic the past 6 months
+                </p>
+                <p>Orthodontist</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="hours">
+        <h2>Clinic Hours</h2>
+        <table class="hours">
+            <tr><th>Day</th><th>Hours</th></tr>
+            <tr><td>Monday</td><td>9:00 AM – 5:00 PM</td></tr>
+            <tr><td>Tuesday</td><td>9:00 AM – 5:00 PM</td></tr>
+            <tr><td>Wednesday</td><td>9:00 AM – 5:00 PM</td></tr>
+            <tr><td>Thursday</td><td>9:00 AM – 5:00 PM</td></tr>
+            <tr><td>Friday</td><td>9:00 AM – 5:00 PM</td></tr>
+            <tr><td>Saturday</td><td>Closed</td></tr>
+            <tr><td>Sunday</td><td>Closed</td></tr>
+        </table>
+        <p class="emergency-info">🚑 Same-day care is provided for most emergencies. Dr. Michailoff may be paged after hours for emergency care.</p>
+    </section>
+    
+    <section id="contact">
+        <h2>Book an Appointment</h2>
+        <form id="contactForm">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="email" id="email" placeholder="Your Email" required>
+        <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+        <button type="submit">Send</button>
+        </form>
+    </section>
+    <footer>
+    <p>&copy; 2025 Mountain View Dental Clinic | All Rights Reserved</p>
+    </footer>
+    <script src="Main.js"></script>
+</body>
+</html>
