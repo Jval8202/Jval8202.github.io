@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Agriculture - Growing the Future</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes slide-in {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .slide-in {
+            animation: slide-in 0.6s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+    
+    <!-- 1. Gradient Header with Shadow -->
+    <header class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 shadow-2xl sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-6">
+            <h1 class="text-4xl md:text-5xl font-bold text-white text-center tracking-tight">
+                 AI in Agriculture
+            </h1>
+            <p class="text-green-100 text-center mt-2 text-lg">Cultivating Tomorrow's Harvest Today</p>
+        </div>
+    </header>
+
+    <!-- 2. Hero Section with Backdrop Blur -->
+    <section class="relative overflow-hidden py-20">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iIzEwYjk4MSIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIuMSIvPjwvZz48L3N2Zz4=')] opacity-30"></div>
+        <div class="container mx-auto px-6 relative">
+            <div class="backdrop-blur-sm bg-white/80 rounded-3xl p-12 max-w-4xl mx-auto border-2 border-green-200 shadow-xl">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-teal-700 mb-6">
+                    Transforming Agriculture Through Intelligence
+                </h2>
+                <p class="text-gray-700 text-lg leading-relaxed">
+                    Artificial Intelligence is revolutionizing farming, bringing precision, sustainability, and innovation to fields worldwide. Discover how technology is helping us feed the future.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Grid Layout with Gap & Hover Effects -->
+    <section class="container mx-auto px-6 py-16">
+        <h2 class="text-3xl font-bold text-gray-800 mb-12 text-center">Key Benefits of AI in Agriculture</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- 4. Card with Ring and Transform -->
+            <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 ring-2 ring-green-100 hover:ring-green-400">
+                <div class="text-5xl mb-4">🎯</div>
+                <h3 class="text-2xl font-bold text-green-700 mb-3">Precision Farming</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    AI-powered sensors and drones analyze soil conditions, moisture levels, and crop health with pinpoint accuracy, optimizing resource use.
+                </p>
+            </div>
+
+            <!-- 5. Gradient Border Card -->
+            <div class="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-sm"></div>
+                <div class="relative bg-white rounded-2xl p-8 -m-8">
+                    <div class="text-5xl mb-4">💧</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-3">Water Conservation</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Smart irrigation systems use AI to predict weather patterns and soil needs, reducing water waste by up to 50%.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 6. Skewed Background Effect -->
+            <div class="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                <div class="absolute inset-0 bg-gradient-to-br from-red-400 via-red-400 to-pink-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-sm"></div>
+                <div class="relative">
+                    <div class="text-5xl mb-4">🌡️</div>
+                    <h3 class="text-2xl font-bold text-orange-700 mb-3">Climate Adaptation</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Machine learning models predict climate changes and suggest crop varieties best suited for evolving conditions.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 7. Divide & Space Styling -->
+            <div class="rounded-2xl p-8 shadow-lg divide-y divide-purple-200 space-y-4 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 ring-2 ring-purple-100 hover:ring-purple-400">
+                
+                <div>
+                    <div class="text-5xl mb-4">🐛</div>
+                    <h3 class="text-2xl font-bold text-purple-700 mb-3">Pest Detection</h3>
+                </div>
+                <div class="pt-4">
+                    <p class="text-gray-600 leading-relaxed">
+                        Computer vision identifies pests and diseases early, enabling targeted treatment and reducing pesticide use by 30-40%.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 8. Border with Multiple Sides -->
+            <div class="rounded-2xl p-8 shadow-lg divide-y divide-purple-200 space-y-4 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 ring-2 ring-orange-100 hover:ring-orange-400">
+                <div class="text-5xl mb-4">📊</div>
+                <h3 class="text-2xl font-bold text-green-700 mb-3">Yield Prediction</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    AI analyzes historical data, weather patterns, and current conditions to forecast harvest yields with 90% accuracy.
+                </p>
+            </div>
+
+            <!-- 9. Flex with Items Alignment -->
+            <div class="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                <div class="absolute inset-0 bg-gradient-to-br from-p-400 via-yellow-400 to-red-400 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-sm"></div>
+                    <div class="text-5xl mb-4">🤖</div>
+                    <h3 class="text-2xl font-bold text-teal-700 mb-3">Autonomous Machinery</h3>
+                    <p class="text-gray-600 leading-relaxed flex-grow">
+                        Self-driving tractors and harvesters work 24/7, increasing efficiency and reducing labor costs significantly.
+                    </p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-teal-200">
+                    <span class="text-teal-600 font-semibold text-sm">Efficiency +65%</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 10. Aspect Ratio & Object Fit Section -->
+    <section class="bg-gradient-to-r from-emerald-100 via-green-100 to-teal-100 py-16 my-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <!-- 11. Prose-like Styling with Line Height -->
+                    <div class="prose prose-lg max-w-none">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6 leading-tight">Smart Farming in Action</h2>
+                        <p class="text-gray-700 leading-loose mb-4">
+                            AI-driven agriculture isn't science fiction—it's happening now. Farms equipped with IoT sensors collect real-time data on everything from soil pH to plant stress levels.
+                        </p>
+                        <p class="text-gray-700 leading-loose">
+                            This data feeds into machine learning algorithms that provide actionable insights, helping farmers make informed decisions that boost productivity while protecting the environment.
+                        </p>
+                    </div>
+                </div>
+                <div class="aspect-video bg-gradient-to-br from-green-400 to-emerald-600 rounded-3xl shadow-2xl flex items-center justify-center text-white text-6xl">
+                    🚜
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. Columns Layout -->
+    <section class="container mx-auto px-6 py-16">
+        <h2 class="text-3xl font-bold text-gray-800 mb-12 text-center">Additional AI Applications</h2>
+        
+        <div class="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+            
+            <!-- 13. Opacity & Blend Mode -->
+            <div class="break-inside-avoid bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute inset-0 bg-white opacity-10 mix-blend-overlay"></div>
+                <div class="relative">
+                    <h3 class="text-2xl font-bold mb-3">🌾 Crop Monitoring</h3>
+                    <p class="text-indigo-100">
+                        Satellite imagery and drone footage analyzed by AI provide comprehensive field mapping and health assessments.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 14. Spacing Utilities (Padding & Margin Variations) -->
+            <div class="break-inside-avoid bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-amber-400 px-6 py-4">
+                    <h3 class="text-2xl font-bold text-amber-900">🌱 Seed Selection</h3>
+                </div>
+                <div class="p-6 space-y-3">
+                    <p class="text-gray-700 mb-2">
+                        AI recommends optimal seed varieties based on:
+                    </p>
+                    <ul class="space-y-2 ml-4">
+                        <li class="text-gray-600">• Regional climate data</li>
+                        <li class="text-gray-600">• Soil composition</li>
+                        <li class="text-gray-600">• Historical performance</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 15. Truncate & Line Clamp -->
+            <div class="break-inside-avoid bg-gradient-to-tl from-rose-50 to-orange-50 rounded-2xl p-8 shadow-lg border-2 border-rose-200">
+                <h3 class="text-2xl font-bold text-rose-700 mb-3 truncate">📱 Mobile Farm Management</h3>
+                <p class="text-gray-700 line-clamp-4">
+                    Farmers access AI-powered dashboards on smartphones, receiving real-time alerts about irrigation needs, pest threats, and optimal harvest times. This puts sophisticated agricultural science in the palm of their hands, democratizing access to cutting-edge farming technology regardless of farm size or location.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 16. Filter Effects -->
+    <section class="container mx-auto px-6 py-16">
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-3xl p-12 shadow-2xl relative overflow-hidden">
+            <div class="absolute inset-0 bg-black opacity-20 backdrop-blur-sm"></div>
+            <div class="relative z-10 text-center">
+                <h2 class="text-4xl font-bold text-white mb-6 filter drop-shadow-lg">Environmental Impact</h2>
+                <div class="grid md:grid-cols-3 gap-8 mt-8">
+                    <div class="backdrop-blur-md bg-white/20 rounded-xl p-6 hover:bg-white/30 transition-all">
+                        <div class="text-5xl mb-3">🌍</div>
+                        <p class="text-2xl font-bold text-white mb-2">30%</p>
+                        <p class="text-blue-100">Reduction in Carbon Emissions</p>
+                    </div>
+                    <div class="backdrop-blur-md bg-white/20 rounded-xl p-6 hover:bg-white/30 transition-all">
+                        <div class="text-5xl mb-3">♻️</div>
+                        <p class="text-2xl font-bold text-white mb-2">40%</p>
+                        <p class="text-blue-100">Less Chemical Use</p>
+                    </div>
+                    <div class="backdrop-blur-md bg-white/20 rounded-xl p-6 hover:bg-white/30 transition-all">
+                        <div class="text-5xl mb-3">💚</div>
+                        <p class="text-2xl font-bold text-white mb-2">25%</p>
+                        <p class="text-blue-100">Increase in Biodiversity</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 17. Overflow & Scroll Snap -->
+    <section class="container mx-auto px-6 py-16">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Success Stories</h2>
+        <div class="flex overflow-x-auto space-x-6 pb-6 snap-x snap-mandatory scrollbar-hide">
+            
+            <div class="flex-none w-80 snap-center bg-white rounded-2xl p-8 shadow-lg">
+                <div class="text-4xl mb-4">🇮🇳</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">India: Cotton Farming</h3>
+                <p class="text-gray-600">
+                    AI pest detection reduced crop losses by 45% and pesticide costs by 35% for 10,000+ farmers.
+                </p>
+            </div>
+            
+            <div class="flex-none w-80 snap-center bg-white rounded-2xl p-8 shadow-lg">
+                <div class="text-4xl mb-4">🇺🇸</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">USA: Corn Belt</h3>
+                <p class="text-gray-600">
+                    Precision agriculture increased yields by 20% while reducing water usage by 30%.
+                </p>
+            </div>
+            
+            <div class="flex-none w-80 snap-center bg-white rounded-2xl p-8 shadow-lg">
+                <div class="text-4xl mb-4">🇧🇷</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Brazil: Soybean Production</h3>
+                <p class="text-gray-600">
+                    AI-driven soil analysis improved harvest quality and reduced fertilizer waste by 28%.
+                </p>
+            </div>
+            
+            <div class="flex-none w-80 snap-center bg-white rounded-2xl p-8 shadow-lg">
+                <div class="text-4xl mb-4">🇰🇪</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Kenya: Small Holdings</h3>
+                <p class="text-gray-600">
+                    Mobile AI apps helped smallholder farmers increase productivity by 50% through better planning.
+                </p>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- 18. Custom Spacing & Container -->
+    <section class="py-20 bg-gradient-to-b from-green-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-6">
+                <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl">The Future is Growing</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    As AI technology advances, agriculture becomes smarter, more sustainable, and more productive. The farms of tomorrow are being built today.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 19. Transition & Animation Classes -->
+    <section class="container mx-auto px-6 py-16">
+        <div class="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 rounded-3xl p-12 text-center shadow-2xl">
+            <div class="float-animation inline-block text-8xl mb-6">🌟</div>
+            <h2 class="text-4xl font-bold text-white mb-4">Join the Agricultural Revolution</h2>
+            <p class="text-purple-100 text-lg mb-8 max-w-2xl mx-auto">
+                Embrace AI-powered farming and be part of the solution to global food security and environmental sustainability.
+            </p>
+            <button class="bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-purple-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                Learn More
+            </button>
+        </div>
+    </section>
+
+    <!-- 20. Footer with Divide & Justify -->
+    <footer class="bg-gray-900 text-gray-300 py-12 mt-20">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-700">
+                <div class="py-4 md:py-0 md:pr-8">
+                    <h3 class="text-white font-bold text-xl mb-3">About AI Agriculture</h3>
+                    <p class="text-sm leading-relaxed">
+                        Exploring how artificial intelligence is transforming farming practices worldwide for a sustainable future.
+                    </p>
+                </div>
+                <div class="py-4 md:py-0 md:px-8">
+                    <h3 class="text-white font-bold text-xl mb-3">Technologies</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="hover:text-green-400 transition-colors cursor-pointer">Machine Learning</li>
+                        <li class="hover:text-green-400 transition-colors cursor-pointer">Computer Vision</li>
+                        <li class="hover:text-green-400 transition-colors cursor-pointer">IoT Sensors</li>
+                        <li class="hover:text-green-400 transition-colors cursor-pointer">Predictive Analytics</li>
+                    </ul>
+                </div>
+                <div class="py-4 md:py-0 md:pl-8 flex flex-col justify-between">
+                    <h3 class="text-white font-bold text-xl mb-3">Stay Connected</h3>
+                    <div class="flex space-x-4 text-2xl">
+                        <span class="hover:text-green-400 transition-colors cursor-pointer">🌐</span>
+                        <span class="hover:text-green-400 transition-colors cursor-pointer">📧</span>
+                        <span class="hover:text-green-400 transition-colors cursor-pointer">📱</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2026 AI in Agriculture. Cultivating innovation for tomorrow's harvest.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
