@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDN Playable Chess</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function ChessApp() {
+            const [game, setGame] = useState(new Chess());
+            const [selectedSquare, setSelectedSquare] = useState(null);
+            const [optionSquares, setOptionSquares] = useState([]);
+
+            // Mapping pieces to Unicode
+            const pieceSymbols = {
+                'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚',
+                'P': '♙', 'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔'
+            };
+
+            const board = game.board();
+
+            function getSquareLabel(i, j) {
+                return String.fromCharCode(97 + j) + (8 - i);
+            }
+
+            function handleSquareClick(square) {
+                // If a square is already selected, try to move there
+                if (selectedSquare) {
+                    const move = game.move({
+                        from: selectedSquare,
+                        to: square,
+                        promotion: 'q' // Always promote to queen for simplicity
+                    });
+
+                    if (move) {
+                        setGame(new Chess(game.fen())); // Trigger re-render with new state
+                        setSelectedSquare(null);
+                        setOptionSquares([]);
+                        return;
+                    }
+                }
+
+                // Otherwise, select the piece and show legal moves
+                const piece = game.get(square);
+                if (piece && piece.color === game.turn()) {
+                    setSelectedSquare(square);
+                    const moves = game.moves({ square, verbose: true });
+                    setOptionSquares(moves.map(m => m.to));
+                } else {
+                    setSelectedSquare(null);
+                    setOptionSquares([]);
+                }
+            }
+
+            const resetGame = () => {
+                const newGame = new Chess();
+                setGame(newGame);
+                setSelectedSquare(null);
+                setOptionSquares([]);
+            };
+
+            const status = () => {
+                if (game.in_checkmate()) return `Checkmate! ${game.turn() === 'w' ? 'Black' : 'White'} wins.`;
+                if (game.in_draw()) return "Draw!";
+                return `${game.turn() === 'w' ? "White's" : "Black's"} Turn`;
+            };
+
+            return (
+                <div className="flex flex-col items-center gap-6">
+                    <div className="text-center">
+                        <h1 className="text-3xl font-bold text-yellow-500 mb-2">React CDN Chess</h1>
+                        <p className={`text-lg font-medium ${game.in_check() ? 'text-red-500 animate-pulse' : 'text-gray-300'}`}>
+                            {status()}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-8 border-4 border-gray-700 shadow-2xl">
+                        {board.map((row, i) => 
+                            row.map((square, j) => {
+                                const squareLabel = getSquareLabel(i, j);
+                                const isDark = (i + j) % 2 === 1;
+                                const isSelected = selectedSquare === squareLabel;
+                                const isOption = optionSquares.includes(squareLabel);
+
+                                return (
+                                    <div 
+                                        key={squareLabel}
+                                        onClick={() => handleSquareClick(squareLabel)}
+                                        className={`w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-4xl cursor-pointer relative
+                                            ${isDark ? 'bg-slate-700' : 'bg-slate-400'}
+                                            ${isSelected ? 'bg-yellow-200/50' : ''}
+                                        `}
+                                    >
+                                        {/* Legal move indicator */}
+                                        {isOption && (
+                                            <div className="absolute w-4 h-4 bg-black/20 rounded-full z-0"></div>
+                                        )}
+                                        
+                                        <span className={`z-10 select-none ${square?.color === 'w' ? 'text-white drop-shadow-md' : 'text-black'}`}>
+                                            {square ? pieceSymbols[square.color === 'w' ? square.type.toUpperCase() : square.type] : ''}
+                                        </span>
+                                    </div>
+                                );
+                            })
+                        )}
+                    </div>
+
+                    <button 
+                        onClick={resetGame}
+                        className="bg-red-600 hover:bg-red-500 px-6 py-2 rounded-lg font-bold transition-all shadow-lg active:scale-95"
+                    >
+                        New Game
+                    </button>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ChessApp />);
+    </script>
+</body>
+</html>
