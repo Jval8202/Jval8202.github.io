@@ -6,7 +6,11 @@
 <body>
     <div class="container">
         <div id="Drag_obj_Con">
-            <div class="Draggable_Obj" id="item" draggable="true">Name</div>
+            <div class="Draggable_Obj" id="item" draggable="true">
+              <span class="label">Name:</span>
+              <span class="editable" contenteditable="true"></span>
+
+            </div>
             <div class="Draggable_Obj" id="item2" draggable="true">Address</div>
             <div class="Draggable_Obj" id="item3" draggable="true">Work ID</div>
         </div>
@@ -17,7 +21,12 @@
             <div class="dropzone" id="zone2">Or here</div>
         </div>
         
+        <div id="Utility_Buttons">
+            <button>Reset</button>
+            <button>Download</button>
+        </div>
+
     </div>
-    <script src="script.js"></script>
+    <script src="index.js"></script>
 </body>
 
