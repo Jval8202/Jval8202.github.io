@@ -1,3 +1,11 @@
+body{
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 100vh;           /* full screen height */
+  margin: 0;
+}
+
 .container {
   display: flex;
   gap: 50px;
@@ -5,10 +13,9 @@
 }
 
 .Drag_obj_Con{
-
   width: 500px;
-  padding: 100px;
-    
+  height:100px;
+  padding: 500px;
 }
 
 .Draggable_Obj {
@@ -17,13 +24,24 @@
   background: lightblue;
   text-align: center;
   cursor: grab;
+  
+}
+
+.editable {
+  outline: none;   /* removes blue edit border */
 }
 
 .dropzone {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
   border: 2px dashed gray;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.Center_Container{
+  margin: 0 auto;      /* This centers it */
+  width: 450px;
+  height: 450px;
 }
