@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  gap: 50px;
+  margin-top: 40px;
+}
+
+.Drag_obj_Con{
+
+  width: 500px;
+  padding: 100px;
+    
+}
+
+.Draggable_Obj {
+  width: 100px;
+  padding: 10px;
+  background: lightblue;
+  text-align: center;
+  cursor: grab;
+}
+
+.dropzone {
+  width: 150px;
+  height: 150px;
+  border: 2px dashed gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
