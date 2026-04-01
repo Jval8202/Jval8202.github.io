@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diwali Menu – Festival of Lights</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IM+Fell+English+SC&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── CSS Variables ── */
+    :root {
+      --gold:        #D4A017;
+      --deep-gold:   #A67C00;
+      --ember:       #C0392B;
+      --saffron:     #E8821A;
+      --cream:       #FDF6E3;
+      --dark:        #1A1208;
+      --ink:         #2C1D0A;
+      --muted:       #7A6040;
+      --border:      rgba(212, 160, 23, 0.35);
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0D0A04;
+      font-family: 'Lato', sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Download Button (screen only) ── */
+    .download-btn {
+      position: fixed;
+      top: 1.4rem;
+      right: 1.6rem;
+      z-index: 999;
+      background: linear-gradient(135deg, var(--gold), var(--saffron));
+      color: var(--dark);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.65rem 1.4rem;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(212,160,23,0.45);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(212,160,23,0.6);
+    }
+
+    /* ── Page (the white card) ── */
+    .page {
+      background: var(--cream);
+      width: 100%;
+      max-width: 860px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(212,160,23,0.25), 0 0 0 1px rgba(212,160,23,0.15);
+    }
+
+    /* ── Decorative corner SVG motifs ── */
+    .corner {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      opacity: 0.55;
+    }
+    .corner-tl { top: 0; left: 0; }
+    .corner-tr { top: 0; right: 0; transform: scaleX(-1); }
+    .corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+    .corner-br { bottom: 0; right: 0; transform: scale(-1,-1); }
+
+    /* ── Top flame strip ── */
+    .flame-strip {
+      width: 100%;
+      height: 7px;
+      background: linear-gradient(90deg, var(--ember), var(--saffron), var(--gold), var(--saffron), var(--ember));
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      padding: 3.2rem 3rem 1.8rem;
+      position: relative;
+    }
+
+    .diya-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.6rem;
+      margin-bottom: 1.4rem;
+    }
+    .diya {
+      font-size: 1.9rem;
+      animation: flicker 2.4s ease-in-out infinite alternate;
+    }
+    .diya:nth-child(2) { animation-delay: 0.4s; }
+    .diya:nth-child(3) { animation-delay: 0.8s; }
+    @keyframes flicker {
+      0%   { opacity: 0.85; transform: scale(1); }
+      100% { opacity: 1;    transform: scale(1.08); }
+    }
+
+    .menu-eyebrow {
+      font-family: 'IM Fell English SC', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.35em;
+      color: var(--saffron);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 7vw, 4.8rem);
+      font-weight: 300;
+      color: var(--dark);
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      margin-bottom: 0.3rem;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--deep-gold);
+    }
+
+    .subtitle {
+      font-family: 'IM Fell English SC', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.28em;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* ── Gold rule ── */
+    .rule {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 1.4rem auto;
+      width: 80%;
+    }
+    .rule::before, .rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+    .rule::after { background: linear-gradient(to left, transparent, var(--gold)); }
+    .rule-diamond {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    /* ── Intro paragraph ── */
+    .intro {
+      background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(232,130,26,0.05));
+      border-left: 3px solid var(--gold);
+      margin: 0 3rem 2.4rem;
+      padding: 1.2rem 1.6rem;
+      border-radius: 0 2px 2px 0;
+    }
+    .intro p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.75;
+      color: var(--ink);
+    }
+
+    /* ── Menu body ── */
+    main {
+      padding: 0 3rem 3rem;
+    }
+
+    /* ── Section headers ── */
+    .section-title {
+      font-family: 'IM Fell English SC', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--saffron);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: var(--dark);
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Dish grid ── */
+    .dishes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 2.6rem;
+    }
+
+    .dish {
+      background: var(--cream);
+      padding: 1.1rem 1.3rem;
+      transition: background 0.2s;
+    }
+    .dish:hover { background: rgba(212,160,23,0.06); }
+
+    .dish-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .dish-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.55;
+      font-weight: 300;
+    }
+
+    /* ── Diet badges ── */
+    .badges {
+      display: flex;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+      margin-top: 0.45rem;
+    }
+    .badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.18rem 0.5rem;
+      border-radius: 2px;
+    }
+    .badge-v  { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+    .badge-ve { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+    .badge-gf { background: #FFF8E1; color: #F57F17; border: 1px solid #FFE082; }
+
+    /* ── Beverages row (single column for 2 items) ── */
+    .dishes.single-col {
+      grid-template-columns: 1fr;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 1.4rem 3rem 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    footer p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.8rem;
+    }
+
+    /* ── Print / PDF styles ── */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      body {
+        background: white;
+        padding: 0;
+      }
+      .download-btn { display: none !important; }
+      .page {
+        box-shadow: none;
+        max-width: 100%;
+        width: 100%;
+      }
+      .dish:hover { background: var(--cream); }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="download-btn" onclick="window.print()">⬇ Download as PDF</button>
+
+  <div class="page">
+
+    <!-- Corner ornaments -->
+    <svg class="corner corner-tl" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 55 Q5 5 55 5 Z" stroke="#D4A017" stroke-width="1.2" fill="none"/>
+      <path d="M14 14 L14 46 Q14 14 46 14 Z" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+      <circle cx="5" cy="5" r="3" fill="#D4A017"/>
+      <circle cx="55" cy="5" r="1.5" fill="#D4A017"/>
+      <circle cx="5" cy="55" r="1.5" fill="#D4A017"/>
+      <path d="M20 5 Q30 20 5 30" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+      <path d="M5 20 Q20 30 30 5" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+    </svg>
+    <svg class="corner corner-tr" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 55 Q5 5 55 5 Z" stroke="#D4A017" stroke-width="1.2" fill="none"/>
+      <path d="M14 14 L14 46 Q14 14 46 14 Z" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+      <circle cx="5" cy="5" r="3" fill="#D4A017"/>
+      <circle cx="55" cy="5" r="1.5" fill="#D4A017"/>
+      <circle cx="5" cy="55" r="1.5" fill="#D4A017"/>
+      <path d="M20 5 Q30 20 5 30" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+      <path d="M5 20 Q20 30 30 5" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+    </svg>
+    <svg class="corner corner-bl" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 55 Q5 5 55 5 Z" stroke="#D4A017" stroke-width="1.2" fill="none"/>
+      <path d="M14 14 L14 46 Q14 14 46 14 Z" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+      <circle cx="5" cy="5" r="3" fill="#D4A017"/>
+      <circle cx="55" cy="5" r="1.5" fill="#D4A017"/>
+      <circle cx="5" cy="55" r="1.5" fill="#D4A017"/>
+    </svg>
+    <svg class="corner corner-br" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 55 Q5 5 55 5 Z" stroke="#D4A017" stroke-width="1.2" fill="none"/>
+      <path d="M14 14 L14 46 Q14 14 46 14 Z" stroke="#D4A017" stroke-width="0.6" fill="none"/>
+      <circle cx="5" cy="5" r="3" fill="#D4A017"/>
+      <circle cx="55" cy="5" r="1.5" fill="#D4A017"/>
+      <circle cx="5" cy="55" r="1.5" fill="#D4A017"/>
+    </svg>
+
+    <div class="flame-strip"></div>
+
+    <!-- ── HEADER ── -->
+    <header>
+      <div class="diya-row">
+        <span class="diya">🪔</span>
+        <span class="diya">🪔</span>
+        <span class="diya">🪔</span>
+      </div>
+      <p class="menu-eyebrow">A Celebration of Light &amp; Flavour</p>
+      <h1><em>Diwali</em> Menu</h1>
+      <p class="subtitle">Festival of Lights Celebration</p>
+      <div class="rule"><div class="rule-diamond"></div></div>
+    </header>
+
+    <!-- ── MENU BODY ── -->
+    <main>
+
+      <!-- APPETIZERS -->
+      <p class="section-title">To Begin</p>
+      <p class="section-name">Appetizers &amp; Starters</p>
+      <div class="dishes">
+
+        <div class="dish">
+          <div class="dish-name">Dahi Puri Chaat</div>
+          <p class="dish-desc">Crisp hollow shells filled with spiced chickpeas, cool yoghurt, and tangy tamarind chutney — a festival street-food classic.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Paneer Tikka Skewers</div>
+          <p class="dish-desc">Cubes of fresh cottage cheese marinated in saffron-spiced yoghurt, char-grilled and finished with a squeeze of lime.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Samosa Chaat</div>
+          <p class="dish-desc">Flaky golden pastry cones filled with spiced potato and green peas, crowned with chutneys and chaat masala.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Masala Papad</div>
+          <p class="dish-desc">Roasted lentil crisps topped with diced onion, tomato, coriander, and a drizzle of green chutney.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-ve">💧 Vegan</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MAIN DISHES -->
+      <p class="section-title">The Heart of the Feast</p>
+      <p class="section-name">Main Dishes</p>
+      <div class="dishes">
+
+        <div class="dish">
+          <div class="dish-name">Dal Makhani</div>
+          <p class="dish-desc">Black lentils simmered overnight with tomatoes and butter, stirred to velvet richness — the soul of a Diwali table.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Shahi Paneer</div>
+          <p class="dish-desc">Cottage cheese in a royal cashew-cream sauce perfumed with cardamom, rose water, and whole spices.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Chana Masala</div>
+          <p class="dish-desc">Hearty chickpeas braised in a bold tomato-onion gravy layered with amchur, cumin, and dried pomegranate seeds.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-ve">💧 Vegan</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Matar Pulao</div>
+          <p class="dish-desc">Basmati rice steamed with fresh peas, whole spices, and caramelised onions — fragrant, light, and celebratory.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-ve">💧 Vegan</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SIDE DISHES -->
+      <p class="section-title">Accompaniments</p>
+      <p class="section-name">Side Dishes</p>
+      <div class="dishes">
+
+        <div class="dish">
+          <div class="dish-name">Garlic Naan</div>
+          <p class="dish-desc">Pillowy leavened bread baked in a tandoor, brushed with garlic butter and fresh coriander.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Boondi Raita</div>
+          <p class="dish-desc">Whipped yoghurt dotted with crispy chickpea pearls and a dusting of roasted cumin — cooling and bright.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Aloo Gobi</div>
+          <p class="dish-desc">Dry-spiced cauliflower and potato tossed with turmeric, ginger, and mustard seeds — simple and deeply comforting.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-ve">💧 Vegan</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Pudina Chutney</div>
+          <p class="dish-desc">Fresh mint blended with green chilli, lime, and a pinch of rock salt — vivid, herbal, and refreshing.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-ve">💧 Vegan</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- DESSERTS -->
+      <p class="section-title">Sweet Endings</p>
+      <p class="section-name">Desserts &amp; Sweets</p>
+      <div class="dishes">
+
+        <div class="dish">
+          <div class="dish-name">Gulab Jamun</div>
+          <p class="dish-desc">Melt-soft milk-solid dumplings soaked in rose-cardamom syrup — the quintessential Diwali sweet.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Kaju Katli</div>
+          <p class="dish-desc">Silky cashew fudge pressed into diamond shapes and wrapped in edible silver leaf — gifted with love at Diwali.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-ve">💧 Vegan</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Gajar Halwa</div>
+          <p class="dish-desc">Slow-cooked grated carrots in saffron-infused milk and ghee, studded with pistachios and golden raisins.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Kheer</div>
+          <p class="dish-desc">Creamy rice pudding simmered in whole milk with cardamom, rose water, and a garnish of crushed almonds.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BEVERAGES -->
+      <p class="section-title">To Raise a Glass</p>
+      <p class="section-name">Beverages</p>
+      <div class="dishes single-col">
+
+        <div class="dish">
+          <div class="dish-name">Rose Sharbat</div>
+          <p class="dish-desc">A chilled rose-water cordial with basil seeds, fresh lime, and a pinch of black salt — festive, floral, and utterly refreshing.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-ve">💧 Vegan</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+        <div class="dish">
+          <div class="dish-name">Masala Chai</div>
+          <p class="dish-desc">Spiced tea brewed with ginger, green cardamom, cinnamon, and cloves — warming hands and hearts as the diyas glow.</p>
+          <div class="badges">
+            <span class="badge badge-v">🌿 Vegetarian</span>
+            <span class="badge badge-gf">🌾 Gluten-Free</span>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- ── FOOTER ── -->
+    <footer>
+      <div class="legend">
+        <div class="legend-item"><span class="badge badge-v">🌿 Vegetarian</span></div>
+        <div class="legend-item"><span class="badge badge-ve">💧 Vegan</span></div>
+        <div class="legend-item"><span class="badge badge-gf">🌾 Gluten-Free</span></div>
+      </div>
+      <div class="rule"><div class="rule-diamond"></div></div>
+      <p>🪔 &nbsp; Wishing you light, laughter, and a feast to remember &nbsp; 🪔</p>
+    </footer>
+
+  </div><!-- /.page -->
+
+</body>
+</html>
