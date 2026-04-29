@@ -1,0 +1,128 @@
+/* RESET DEFAULT BROWSER STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* PAGE BACKGROUND */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(
+        135deg,
+        #667eea,
+        #764ba2
+    );
+}
+
+
+/* FORM CONTAINER */
+form {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    width: 320px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+
+/* INPUT FIELDS */
+input {
+    padding: 12px;
+
+    border-radius: 8px;
+
+    border: 1px solid #ccc;
+
+    font-size: 16px;
+
+    transition: 0.2s;
+}
+
+
+/* INPUT FOCUS EFFECT */
+input:focus {
+    outline: none;
+
+    border-color: #667eea;
+
+    box-shadow: 0 0 5px rgba(102,126,234,0.5);
+}
+
+
+/* SUBMIT BUTTON */
+button {
+    padding: 12px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #667eea;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+/* BUTTON HOVER */
+button:hover:not(:disabled) {
+    background: #5a67d8;
+}
+
+
+/* DISABLED BUTTON */
+button:disabled {
+    background: #ccc;
+
+    cursor: not-allowed;
+}
+
+
+/* MESSAGE TEXTS */
+#msg {
+    margin-top: 15px;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    color: white;
+}
+
+
+/* LIVE FEEDBACK TEXT */
+#LiveValue,
+#LivePass,
+#ConfirmMsg {
+
+    margin-top: 5px;
+
+    font-size: 14px;
+
+    color: white;
+
+    text-align: center;
+}
