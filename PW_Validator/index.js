@@ -1,108 +1,138 @@
-// DISPLAYERS 
-let form = document.querySelector("#form");
-let msg = document.querySelector("#msg");
-
-// INPUT VALUES
-let input = document.querySelector("#name");
-let password = document.querySelector("#passw");
-let Confirm_Pass = document.querySelector("#confirm-passw");
-
-// BUTTON
-const SubmitButton = document.querySelector('#but');
-
-// MESSAGES
-let LV = document.querySelector("#LiveValue");
-let PV = document.querySelector("#LivePass");
-let CM = document.querySelector("#ConfirmMsg");
-
-// COUNTER
-let value = 0;
-
-// STATE FLAGS
-let NameLength = false;
-let PassLength = false;
-
-SubmitButton.disabled = true;
-
-
-// NAME CHECK
-input.addEventListener("input", (event)=>{
-
-    let liveValue = event.target.value;
-    LV.textContent =
-    `Characters: ${liveValue.length}`;
-    NameLength =
-    liveValue.length > 3;
-    updateButton();
-
-});
-
-
-// PASSWORD STRENGTH
-password.addEventListener("input", (event)=>{
-    let length =
-    event.target.value.length;
-
-    if(length < 5){
-        PV.textContent =
-        "Weak password";
-        PassLength = false;
-    }
-    else if(length < 8){
-        PV.textContent =
-        "Medium password";
-        PassLength = false;
-    }
-    else{
-        PV.textContent =
-        "Strong password";
-        PassLength = true;
-    }
-    checkPasswordMatch();
-    updateButton();
-
-});
-
-
-// CONFIRM PASSWORD
-Confirm_Pass.addEventListener("input", ()=>{
-    checkPasswordMatch();
-    updateButton();
-});
-
-
-// PASSWORD MATCH CHECK
-function checkPasswordMatch(){
-    if(password.value ===
-       Confirm_Pass.value){
-        CM.textContent =
-        "Passwords match";
-    }
-    else{
-        CM.textContent =
-        "Passwords don't match";
-    }
+/* RESET DEFAULT BROWSER STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// BUTTON ENABLE LOGIC
-function updateButton(){
-    if(NameLength &&
-       PassLength &&
-       password.value === Confirm_Pass.value){
-       SubmitButton.disabled = false;
-    }
-    else{
-        SubmitButton.disabled = true;
-    }
+
+/* PAGE BACKGROUND */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(
+        135deg,
+        #667eea,
+        #764ba2
+    );
 }
 
-// FORM SUBMIT
-form.addEventListener("submit", (event)=>{
-    event.preventDefault();
 
-    if(SubmitButton.disabled === false){
-        value++;
-        msg.textContent =
-        `Hello, ${input.value} (${value})`;
-    }
-});
+/* FORM CONTAINER */
+form {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    width: 320px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+
+/* INPUT FIELDS */
+input {
+    padding: 12px;
+
+    border-radius: 8px;
+
+    border: 1px solid #ccc;
+
+    font-size: 16px;
+
+    transition: 0.2s;
+}
+
+
+/* INPUT FOCUS EFFECT */
+input:focus {
+    outline: none;
+
+    border-color: #667eea;
+
+    box-shadow: 0 0 5px rgba(102,126,234,0.5);
+}
+
+
+/* SUBMIT BUTTON */
+button {
+    padding: 12px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #667eea;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+/* BUTTON HOVER */
+button:hover:not(:disabled) {
+    background: #5a67d8;
+}
+
+
+/* DISABLED BUTTON */
+button:disabled {
+    background: #ccc;
+
+    cursor: not-allowed;
+}
+
+
+/* MESSAGE TEXTS */
+#msg {
+    margin-top: 15px;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    color: white;
+}
+
+
+/* LIVE FEEDBACK TEXT */
+#LiveValue,
+#LivePass,
+#ConfirmMsg {
+
+    margin-top: 5px;
+
+    font-size: 14px;
+
+    color: white;
+
+    text-align: center;
+}
+
+.feedback {
+    font-size: 13px;
+
+    color: #555;
+
+    margin-top: -8px;
+
+    margin-bottom: 5px;
+}
