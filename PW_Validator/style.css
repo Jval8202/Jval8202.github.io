@@ -23,7 +23,6 @@ body {
     );
 }
 
-
 /* FORM CONTAINER */
 form {
     background: white;
@@ -119,10 +118,14 @@ button:disabled {
 #ConfirmMsg {
 
     margin-top: 5px;
-
     font-size: 14px;
-
-    color: white;
-
+    color: rgb(41, 41, 41);
     text-align: center;
+}
+
+.feedback {
+    font-size: 13px;
+    color: #555;
+    margin-top: -8px;
+    margin-bottom: 5px;
 }
