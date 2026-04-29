@@ -10,34 +10,39 @@
 
     <body>
         <form id="form">
-        
+
             <input
                 id="name"
                 placeholder="Enter your name"
             >
-        
+
+            <!-- Message under the name input -->
+            <p id="LiveValue" class="feedback"></p>
+
             <input
                 id="passw"
                 type="password"
                 placeholder="Enter password"
             >
-        
+
+            <p id="LivePass" class="feedback"></p>
+
             <input
                 id="confirm-passw"
                 type="password"
                 placeholder="Confirm password"
             >
-        
+
+            <p id="ConfirmMsg" class="feedback"></p>
+
             <button type="submit" id="but">
                 Submit
             </button>
-        
+
         </form>
-        
+
         <p id="msg"></p>
-        <p id="LiveValue"></p>
-        <p id="LivePass"></p>
-        <p id="ConfirmMsg"></p>
+
     </body>
 
     <script src="index.js"></script>
