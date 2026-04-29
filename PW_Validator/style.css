@@ -26,18 +26,12 @@ body {
 /* FORM CONTAINER */
 form {
     background: white;
-
     padding: 30px;
-
     border-radius: 12px;
-
     width: 320px;
-
     display: flex;
     flex-direction: column;
-
     gap: 15px;
-
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
@@ -45,13 +39,9 @@ form {
 /* INPUT FIELDS */
 input {
     padding: 12px;
-
     border-radius: 8px;
-
     border: 1px solid #ccc;
-
     font-size: 16px;
-
     transition: 0.2s;
 }
 
@@ -59,9 +49,7 @@ input {
 /* INPUT FOCUS EFFECT */
 input:focus {
     outline: none;
-
     border-color: #667eea;
-
     box-shadow: 0 0 5px rgba(102,126,234,0.5);
 }
 
@@ -69,19 +57,12 @@ input:focus {
 /* SUBMIT BUTTON */
 button {
     padding: 12px;
-
     border: none;
-
     border-radius: 8px;
-
     background: #667eea;
-
     color: white;
-
     font-size: 16px;
-
     cursor: pointer;
-
     transition: 0.2s;
 }
 
@@ -95,7 +76,6 @@ button:hover:not(:disabled) {
 /* DISABLED BUTTON */
 button:disabled {
     background: #ccc;
-
     cursor: not-allowed;
 }
 
@@ -103,11 +83,8 @@ button:disabled {
 /* MESSAGE TEXTS */
 #msg {
     margin-top: 15px;
-
     text-align: center;
-
     font-weight: bold;
-
     color: white;
 }
 
